@@ -3,7 +3,7 @@
 ***
 
 ## General information
-Before proceeding, please read [general information](https://github.com/wirecard/sap-commerce-ee/wiki/General-Shop-Plugin-Information), as it provides information on Wirecard shop plugins functionality and features.
+Before proceeding, please read [general information](https://github.com/wirecard/sap-commerce-ee/wiki/Wirecard-Shop-Extensions-General-Information), as it provides information on Wirecard shop plugins functionality and features.
 
 ***
 
