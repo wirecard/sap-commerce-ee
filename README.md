@@ -1,4 +1,4 @@
-# Wirecard SAP Hybris Commerce Extension
+# Wirecard Extension for SAP Commerce
 
 ***
 
