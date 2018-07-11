@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-sepa"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="AUTHORIZATION" value-ref="sepaAuthorizationPaymentOperation"/>
+                <entry key-ref="CAPTURE" value-ref="sepaDebitPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="sepaRefundPaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="sepaDebitCancelPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - SEPA -->
+    <!--Sepa Payment Operation-->
+    <bean id="sepaAuthorizationPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="sepaAuthorizationPaymentConverter"/>
+        <property name="paymentProcessor" ref="bankAccountPaymentProcessor"/>
+        <property name="paymentCommand" ref="defaultAuthorizationPaymentCommand"/>
+        <property name="responseHandler" ref="sepaAuthorizationResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!--Sepa Debit (Take Payment) Operation-->
+    <bean id="sepaDebitPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="sepaDebitPaymentConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="debitPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!--Sepa Refund Operation-->
+    <bean id="sepaRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="sepaPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+        <property name="fallBack" value="true"/>
+    </bean>
+
+    <!--Sepa DebitCancel Operation-->
+    <bean id="sepaDebitCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="sepaAuthorizationCancelPaymentConverter"/>
+        <property name="paymentCommand" ref="noopWirecardPaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+    </bean>
+
+    <!-- SEPA RESPONSE HANDLER-->
+    <bean id="sepaAuthorizationResponseHandler" parent="orderRecalculationResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.WirecardSepaAuthorizationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.SepaPaymentInfoModel"/>
+    </bean>
+
+    <!--Sepa REFUND CONVERTER-->
+    <alias name="sepaPaymentRefundConverter" alias="sepaPaymentRefundConverter"/>
+    <bean id="sepaPaymentRefundConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <bean class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+                      parent="abstractParentTransactionIdPopulator">
+                    <property name="parentPaymentTransactionType" value="DEBIT"/>
+                    <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+                </bean>
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="sepacreditPaymentMethodsPopulator"/>
+                <ref bean="creditTransactionTypePopulator"/>
+                <ref bean="bankAccountPaymentPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Sepa Authorization Payment Converter-->
+    <bean id="sepaAuthorizationPaymentConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+                <ref bean="authorizationTransactionTypePopulator"/>
+                <ref bean="creditorIdPopulator"/>
+                <ref bean="mandatePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Sepa Debit Payment Converter-->
+    <alias name="sepaDebitPaymentConverter" alias="sepaDebitPaymentConverter"/>
+    <bean id="sepaDebitPaymentConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="debitTransactionTypePopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+                <ref bean="bankAccountPaymentPopulator"/>
+                <ref bean="creditorIdPopulator"/>
+                <ref bean="mandatePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Sepa Cancel Payment Converter-->
+    <bean id="sepaAuthorizationCancelPaymentConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="voidAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+                <ref bean="bankAccountPaymentPopulator"/>
+                <ref bean="creditorIdPopulator"/>
+                <ref bean="mandatePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="bankAccountPaymentProcessor"
+          class="com.wirecard.hybris.core.operation.impl.BankAccountPaymentProcessor">
+        <property name="objectFactory" ref="wirecardObjectFactory"/>
+    </bean>
+
+</beans>

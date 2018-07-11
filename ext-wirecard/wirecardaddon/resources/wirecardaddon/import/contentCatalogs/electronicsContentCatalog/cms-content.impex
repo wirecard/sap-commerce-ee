@@ -1,0 +1,21 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2017 SAP SE or an SAP affiliate company.  All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+$contentCatalog=electronicsContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$jarResourceCms=jar:com.wirecard.hybris.addon.constants.WirecardaddonConstants&/wirecardaddon/import/cockpit/cmscockpit
+
+
+INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;actions(uid,$contentCV)[mode=append];&componentRef
+;;AccountOrderDetailsOverviewComponent;Account Order Details Overview Info Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountOrderDetailOverview.jsp;;AccountOrderDetailsOverviewComponent
+;;OrderConfirmationOverviewComponent;Order Confirmation Overview Info Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountOrderDetailOverview.jsp;;OrderConfirmationOverviewComponent
+;;OrderConfirmationShippingComponent;Order Confirmation Shipping Info Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;;OrderConfirmationShippingComponent
+;;AccountOrderDetailsShippingComponent;Account Order Details Shipping Info Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;;AccountOrderDetailsShippingComponent
+;;AccountPaymentDetailsComponent;Account Payment Details Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountPaymentInfoPage.jsp;;AccountPaymentDetailsComponent

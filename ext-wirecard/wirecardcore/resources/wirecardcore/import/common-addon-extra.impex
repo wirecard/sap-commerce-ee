@@ -1,0 +1,45 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2017 SAP SE or an SAP affiliate company.  All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+$supportedPaymentModes=supportedPaymentModes(code)
+
+# logo
+$siteResource=jar:com.wirecard.hybris.core.constants.WirecardcoreConstants&/wirecardcore/import
+$catalog=Default
+$contentCV=catalogVersion(catalog(id[default=$catalog]),version[default='Staged'])[unique=true]
+INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='image/jpeg'];altText;folder(qualifier)[default='images']
+;;paypalLogo;paypal.png;$siteResource/images/paypal.png;image/png;Paypal;
+;;creditcardLogo_en;ccard.png;$siteResource/images/creditcard.png;image/png;Credit Card;
+;;creditcardLogo_de;ccard.png;$siteResource/images/creditcard.png;image/png;Kreditkarte;
+; ; unionpayinternationalLogo ; unionpayinternational.png ; $siteResource/images/unionpayinternational.png ; image/png ; Unionpay International ;
+;;sofortLogo;sofort.png;$siteResource/images/sofortbanking.png;image/png;Sofort;
+;;masterpassLogo;masterpass.png;$siteResource/images/masterpass.png;image/png;Masterpass
+;;alipayXLogo;alipayXLogo.png;$siteResource/images/alipayxborder.png;image/png;Alipay Cross Border
+;;idealLogo;ideal.png;$siteResource/images/ideal.png;image/png;Ideal
+;;sepaLogo;sepa.png;$siteResource/images/sepa.png;image/png;SEPA Direct Debit;
+;;poipiaLogo;poipia.png;$siteResource/images/poipia.png;image/png;Payment On Invoice/Payment In Advance;
+;;ratepayInvoiceLogo;ratepayinvoice.png;$siteResource/images/ratepayinvoice.png;image/png;Ratepay Invoice
+
+INSERT_UPDATE StandardPaymentMode;code[unique=true];paymentAlias;name[lang=de];name[lang=en];description[lang=de];description[lang=en];active[default=false];paymentinfotype(code);media(code)[lang=de];media(code)[lang=en]; transactionType(code);showOptionalFormField[default=false]
+;wd-paypal;paypal;PayPal;PayPal;Bezahlung mit PayPal;Payment via PayPal;;PaypalPaymentInfo;paypalLogo;paypalLogo;AUTHORIZE
+;wd-creditcard;creditcard;Kreditkarte;Credit card;Bezahlung mit Kreditkarte;Payment via Credit card;;CreditCardPaymentInfo;creditcardLogo_de;creditcardLogo_en;AUTHORIZE
+;wd-creditcard-3dsattempt;creditcard;Kreditkarte;Credit card;Bezahlung mit Kreditkarte;Payment via Credit card;;CreditCardPaymentInfo;creditcardLogo_de;creditcardLogo_en;AUTHORIZE
+;wd-creditcard-3dsonly;creditcard;Kreditkarte;Credit card;Bezahlung mit Kreditkarte;Payment via Credit card;;CreditCardPaymentInfo;creditcardLogo_de;creditcardLogo_en;AUTHORIZE
+;wd-unionpayinternational;unionpay;Unionpay International;UnionpayInternational;Bezahlung mit UnionpayInternational;Payment via UnionpayInternational;;CreditCardPaymentInfo;unionpayinternationalLogo;unionpayinternationalLogo;AUTHORIZE
+;wd-masterpass;masterpass;Masterpass;Masterpass;Bezahlung mit Masterpass;Payment via Masterpass;;MasterpassPaymentInfo;masterpassLogo;masterpassLogo;AUTHORIZE
+;wd-sofort;sofortbanking;Sofort;Sofort;Bezahlung mit Sofort;Payment via Sofort;;SofortPaymentInfo;sofortLogo;sofortLogo;PURCHASE_WITH_HOP
+;wd-alipay-xborder;alipay_xborder;Alipay Cross Border;Alipay Cross Border;Bezahlung mit Alipay Cross Border;Payment via Alipay Cross Border;;AlipayXborderPaymentInfo;alipayXLogo;alipayXLogo;PURCHASE_WITH_HOP
+;wd-ideal;ideal;iDEAL;iDEAL;Bezahlung mit iDEAL;Payment via iDEAL;;IdealPaymentInfo;idealLogo;idealLogo;PURCHASE_WITH_HOP
+;wd-sepa;sepadirectdebit;SEPA;SEPA;Bezahlung mit SEPA;Payment via SEPA;;SepaPaymentInfo;sepaLogo;sepaLogo;AUTHORIZE;
+;wd-poipia;wiretransfer;Pay on Invoice/Pay in Advance;Pay on Invoice/Pay in Advance;Bezahlung mit Pay on Invoice/Pay in Advance;Payment via Pay on Invoice/Pay in Advance;;PoipiaPaymentInfo;poipiaLogo;poipiaLogo;AUTHORIZE;true
+;wd-wirecard-invoice;ratepay-invoice;Guaranteed Invoice;Guaranteed Invoice;Bezahlung mit Guaranteed Invoice;Pay with Guaranteed Invoice;;InvoicePaymentInfo;ratepayInvoiceLogo;ratepayInvoiceLogo;AUTHORIZE
+
+INSERT_UPDATE CatalogUnawareMedia; code[unique = true]; mime; @media[translator = de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite = true]
+; api-test.wirecard.com.crt ; text/plain ; $siteResource/documents/api-test.wirecard.com.crt

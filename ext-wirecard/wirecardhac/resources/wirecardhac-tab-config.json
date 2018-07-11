@@ -1,0 +1,34 @@
+[
+  {
+    "basePath": "/wirecardhac",
+    "mainTabLabel": "Wirecard",
+    "subTabs": [
+      {
+        "path": "/pluginInfo",
+        "label": "Wirecard plugin",
+        "skipPrefix": false
+      },
+      {
+        "path": "/platform/extensions",
+        "label": "Other plugins",
+        "roles": [
+          "ROLE_HAC_PLATFORM_EXTENSIONS"
+        ],
+        "skipPrefix": true
+      },
+      {
+        "path": "/platform/system",
+        "label": "System information",
+        "roles": [
+          "ROLE_HAC_PLATFORM_SYSTEM"
+        ],
+        "skipPrefix": true
+      },
+      {
+        "path": "/supportTeams",
+        "label": "Support teams",
+        "skipPrefix": false
+      }
+    ]
+  }
+]

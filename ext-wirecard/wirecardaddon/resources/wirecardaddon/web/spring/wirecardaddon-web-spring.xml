@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [y] hybris Platform Copyright (c) 2017 SAP SE or an SAP affiliate company. All rights reserved. This software is the 
+    confidential and proprietary information of SAP ("Confidential Information"). You shall not disclose such Confidential Information 
+    and shall use it only in accordance with the terms of the license agreement you entered into with SAP. -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+
+
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:annotation-config />
+    <context:component-scan base-package="com.wirecard.hybris.addon.controllers" />
+
+    <!-- Expose /acceleratoraddon/web/webroot/WEB-INF/messages/base.js.properties resource bundle as javascript variables -->
+    <bean id="defaultWirecardaddonJavaScriptMessageResourceAccessor" parent="abstractJavaScriptMessageResourceAccessor">
+        <property name="addOnName" value="wirecardaddon" />
+    </bean>
+
+    <bean id="defaultWirecardaddonBeforeViewJsPropsHandlerAdaptee" parent="abstractBeforeViewJsPropsHandlerAdaptee"
+        class="de.hybris.platform.addonsupport.interceptors.ExportJsPropertiesBeforeViewHandler">
+        <property name="messageSource" ref="defaultWirecardaddonJavaScriptMessageResourceAccessor" />
+    </bean>
+
+    <bean id="getWirecardaddonBeforeViewHandler" parent="beforeViewHandlerAdapter">
+        <property name="adaptee">
+            <ref bean="defaultWirecardaddonBeforeViewJsPropsHandlerAdaptee" />
+        </property>
+    </bean>
+    <bean id="WirecardaddonBeforeViewHandlerListMergeDirective" depends-on="beforeViewHandlersList" parent="listMergeDirective">
+        <property name="add" ref="getWirecardaddonBeforeViewHandler" />
+    </bean>
+
+
+
+    <bean name="wirecardSummaryCheckoutStepController" class="com.wirecard.hybris.addon.controllers.pages.checkout.steps.WirecardSummaryCheckoutStepController"/>
+    <bean name="wirecardPaymentMethodCheckoutStepController" class="com.wirecard.hybris.addon.controllers.pages.checkout.steps.WirecardPaymentMethodCheckoutStepController"/>
+
+
+    <bean id="REDIRECT_TO_PAYMENT_METHOD" class="java.lang.String">
+        <constructor-arg value="redirect:/checkout/multi/wirecard/payment-method/add"/>
+    </bean>
+    
+    <bean id="REDIRECT_TO_SUMMARY" class="java.lang.String">
+        <constructor-arg value="redirect:/checkout/multi/wirecard/summary/view"/>
+    </bean>
+
+    <bean id="REDIRECT_TO_PLACEORDER" class="java.lang.String">
+        <constructor-arg value="redirect:/checkout/multi/wirecard/summary/placeOrder"/>
+    </bean>
+
+    <bean id="PAYPAL_RETURN_REDIRECT_ON_SUCCESS" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_SUMMARY" />
+    </bean>
+
+    <bean id="PAYPAL_RETURN_REDIRECT_ON_ERROR" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_PAYMENT_METHOD" />
+    </bean>
+
+    <bean id="MASTERPASS_RETURN_REDIRECT_ON_SUCCESS" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_SUMMARY"/>
+    </bean>
+
+    <bean id="MASTERPASS_RETURN_REDIRECT_ON_ERROR" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_PAYMENT_METHOD"/>
+    </bean>
+
+    <bean id="DEBIT_RETURN_REDIRECT_ON_SUCCESS" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_PLACEORDER"/>
+    </bean>
+
+    <bean id="DEBIT_RETURN_REDIRECT_ON_ERROR" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_PAYMENT_METHOD"/>
+    </bean>
+
+    <bean id="INSTALLMENT_RETURN_REDIRECT_ON_SUCCESS" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_SUMMARY" />
+    </bean>
+
+    <bean id="INSTALLMENT_RETURN_REDIRECT_ON_ERROR" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_PAYMENT_METHOD" />
+    </bean>
+
+    <bean id="RATEPAY_INVOICE_RETURN_REDIRECT_ON_SUCCESS" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_SUMMARY" />
+    </bean>
+
+    <bean id="RATEPAY_INVOICE_RETURN_REDIRECT_ON_ERROR" class="java.lang.String">
+        <constructor-arg ref="REDIRECT_TO_PAYMENT_METHOD" />
+    </bean>
+
+    <util:list id="csrfAllowedUrlPatternsList" />
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.form.send.url}" />
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.pares.url}"/>
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.paypal.return.url}"/>
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.masterpass.return.url}"/>
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.debit.return.url}"/>
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.paymentnotifications.url}"/>
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.ratepay-install.return.url}"/>
+    </bean>
+    <bean depends-on="csrfAllowedUrlPatternsList" parent="listMergeDirective">
+        <property name="add" value="${payment.ratepay-invoice.return.url}"/>
+    </bean>
+
+    <bean id="wirecardPaymentDetailsValidator" class="com.wirecard.hybris.addon.forms.validation.WirecardPaymentDetailsValidator"/>
+
+    <alias name="wirecardSummaryCheckoutValidator" alias="defaultResponsiveSummaryCheckoutValidator"/>
+    <bean id="wirecardSummaryCheckoutValidator"
+          class="com.wirecard.hybris.addon.checkout.steps.validation.impl.WirecardSummaryCheckoutStepValidator"
+          parent="abstractCheckoutStepValidator">
+        <property name="checkoutFlowFacade" ref="checkoutFlowFacade"/>
+        <property name="checkoutFacade" ref="checkoutFacade"/>
+    </bean>
+
+</beans>

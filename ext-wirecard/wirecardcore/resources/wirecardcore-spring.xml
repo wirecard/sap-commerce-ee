@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [y] hybris Platform Copyright (c) 2017 SAP SE or an SAP affiliate company. All rights reserved. This software is the
+    confidential and proprietary information of SAP ("Confidential Information"). You shall not disclose such Confidential Information
+    and shall use it only in accordance with the terms of the license agreement you entered into with SAP. -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="payment-methods/wirecardcore-commons-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-paypal-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-sofort-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-creditcard-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-masterpass-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-ideal-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-alipayXBorder-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-installment-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-sepa-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-poipia-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-ratepayinvoice-spring.xml"/>
+    <import resource="payment-methods/wirecardcore-unionpayinternational-spring.xml"/>
+
+    <bean id="wirecardcoreSystemSetup" parent="abstractCoreSystemSetup" class="com.wirecard.hybris.core.setup.WirecardcoreSystemSetup">
+        <!-- constructor arg injection example -->
+        <constructor-arg ref="wirecardcoreService"/>
+
+    </bean>
+
+    <bean id="wirecardcoreService" class="com.wirecard.hybris.core.service.impl.DefaultWirecardcoreService">
+        <!-- setter injection example -->
+        <property name="modelService" ref="modelService"/>
+        <property name="mediaService" ref="mediaService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+    </bean>
+
+    <!-- Wirecard Payment Configuration Service-->
+    <bean id="wirecardPaymentConfigurationService" class="com.wirecard.hybris.core.service.impl.DefaultWirecardPaymentConfigurationService">
+        <property name="wirecardPaymentConfigurationDao" ref="wirecardPaymentConfigurationDao"/>
+        <property name="wirecardAuthenticationDao" ref="wirecardAuthenticationDao"/>
+        <property name="baseStoreService" ref="baseStoreService"/>
+        <property name="cartService" ref="cartService"/>
+        <property name="baseSiteService" ref="baseSiteService"/>
+        <property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+        <property name="configurationService" ref="configurationService"/>
+        <property name="wirecardPaymentService" ref="wirecardPaymentService"/>
+        <property name="paymentConfigurationFilters">
+            <list>
+                <ref bean="paymentConfigurationEnabledFilter"/>
+                <ref bean="paymentConfigurationCurrencyFilter"/>
+                <ref bean="paymentConfigurationShippingFilter"/>
+                <ref bean="paymentConfigurationTotalAmountFilter"/>
+                <ref bean="paymentConfigurationAgeFilter"/>
+                <ref bean="paymentConfigurationDigitalProductFilter"/>
+                <ref bean="paymentConfigurationPromotionFilter"/>
+            </list>
+        </property>
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+        <property name="wirecardPaymentModeService" ref="wirecardPaymentModeService"/>
+    </bean>
+
+    <!-- Payment configuration filters -->
+    <bean id="paymentConfigurationCurrencyFilter" class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationCurrencyFilter"/>
+    <bean id="paymentConfigurationEnabledFilter" class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationEnabledFilter"/>
+    <bean id="paymentConfigurationShippingFilter" class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationShippingFilter"/>
+    <bean id="paymentConfigurationTotalAmountFilter"
+          class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationTotalAmountFilter">
+        <property name="commonI18NService" ref="commonI18NService"/>
+    </bean>
+    <bean id="paymentConfigurationAgeFilter" class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationAgeFilter"/>
+    <bean id="paymentConfigurationDigitalProductFilter"
+          class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationDigitalProductFilter"/>
+    <bean id="paymentConfigurationPromotionFilter"
+          class="com.wirecard.hybris.core.payment.filter.impl.PaymentConfigurationPromotionFilter">
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <!-- Wirecard Payment Configuration Dao-->
+    <bean id="wirecardPaymentConfigurationDao" class="com.wirecard.hybris.core.dao.impl.DefaultWirecardPaymentConfigurationDao"
+          parent="abstractItemDao"/>
+
+    <bean id="wirecardAuthenticationDao" class="com.wirecard.hybris.core.dao.impl.DefaultWirecardAuthenticationDao"
+          parent="abstractItemDao"/>
+
+    <alias name="wirecardOrderModelDao" alias="orderModelDao"/>
+    <bean id="wirecardOrderModelDao" class="com.wirecard.hybris.core.dao.impl.DefaultWirecardOrderModelDao"
+          parent="abstractItemDao"/>
+
+    <alias name="defaultWirecardPaymentModeFacade" alias="wirecardPaymentModeFacade"/>
+    <bean id="defaultWirecardPaymentModeFacade" class="com.wirecard.hybris.facades.impl.DefaultWirecardPaymentModeFacade">
+        <property name="paymentModeConverter" ref="paymentModeConverter"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="wirecardPaymentModeService" ref="wirecardPaymentModeService"/>
+        <property name="i18NService" ref="defaultI18NService"/>
+        <property name="wirecardSignatureStrategy" ref="defaultWirecardSignatureStrategy"/>
+    </bean>
+
+    <alias name="defaultWirecardCheckoutFacade" alias="wirecardCheckoutFacade"/>
+    <alias name="defaultWirecardCheckoutFacade" alias="checkoutFlowFacade"/>
+    <alias name="defaultWirecardCheckoutFacade" alias="acceleratorCheckoutFacade"/>
+    <alias name="defaultWirecardCheckoutFacade" alias="checkoutFacade"/>
+    <bean id="defaultWirecardCheckoutFacade" class="com.wirecard.hybris.facades.impl.DefaultWirecardCheckoutFacade"
+          parent="defaultCheckoutFlowFacade">
+        <property name="wirecardPaymentInfoConverter" ref="wirecardPaymentInfoConverter"/>
+        <property name="wirecardPaymentService" ref="wirecardPaymentService"/>
+        <property name="customerEmailResolutionService" ref="customerEmailResolutionService"/>
+        <property name="orderConverter" ref="orderConverter"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+        <property name="wirecardPaymentModeService" ref="wirecardPaymentModeService"/>
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+        <property name="wirecardPaymentModeFacade" ref="defaultWirecardPaymentModeFacade"/>
+        <property name="wirecardCCPaymentInfoConverter" ref="wirecardCCPaymentInfoConverter"/>
+        <property name="wirecardPaymentModeConverter" ref="paymentModeConverter"/>
+    </bean>
+
+    <alias name="wirecardOrderPopulator" alias="orderPopulator"/>
+    <bean id="wirecardOrderPopulator"
+          class="com.wirecard.hybris.facades.populators.WirecardOrderPopulator"
+          parent="baseOrderPopulator">
+        <property name="wirecardPaymentInfoConverter" ref="wirecardPaymentInfoConverter"/>
+        <property name="wirecardPaymentModeConverter" ref="paymentModeConverter"/>
+    </bean>
+
+
+    <!--Interceptor for wirecard user and password-->
+    <alias name="defaultWirecardAuthenticationValidateInterceptor" alias="wirecardAuthenticationValidateInterceptor"/>
+    <bean id="defaultWirecardAuthenticationValidateInterceptor"
+          class="com.wirecard.hybris.core.interceptors.DefaultWirecardAuthenticationValidateInterceptor" autowire="byName">
+        <property name="wirecardPaymentCommandService" ref="defaultWirecardPaymentCommandService"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <bean id="wirecardValidateInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="wirecardAuthenticationValidateInterceptor"/>
+        <property name="typeCode" value="WirecardAuthentication"/>
+        <property name="replacedInterceptors" ref="uniqueCatalogItemValidator"/>
+        <property name="order" value="5000"/>
+    </bean>
+
+</beans>

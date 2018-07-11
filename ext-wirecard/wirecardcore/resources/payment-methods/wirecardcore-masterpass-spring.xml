@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-masterpass"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="AUTHORIZATION" value-ref="masterpassAuthorizationPaymentOperation"/>
+                <entry key-ref="AUTHORIZATION_RETURN" value-ref="masterpassAuthorizationReturnPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="CAPTURE" value-ref="masterpassCapturePaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="masterpassCancelPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="masterpassRefundPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - MASTERPASS-->
+    <!--Masterpass Authorization Operation-->
+    <bean id="masterpassAuthorizationPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="defaultPaymentAuthorizationConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationPaymentCommand"/>
+        <property name="responseHandler" ref="masterpassAuthorizationResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationUrlPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Masterpass Authorization Operation-->
+    <bean id="masterpassAuthorizationReturnPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentCommand" ref="noopWirecardPaymentCommand"/>
+        <property name="responseHandler" ref="wirecardMasterpassAuthorizationReturnResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationPaymentTransactionStrategy"/>
+        <property name="parentOperation" value="true"/>
+    </bean>
+
+    <!--Masterpass Capture Operation-->
+    <bean id="masterpassCapturePaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="masterpassPaymentCaptureConverter"/>
+        <property name="paymentCommand" ref="defaultCapturePaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="capturePaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Masterpass Cancel Operation-->
+    <bean id="masterpassCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="masterpassAuthorizationCancelConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationCancelCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Masterpass Refund Operation-->
+    <bean id="masterpassRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="masterpassPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="defaultRefundPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+    </bean>
+
+    <!-- MASTERPASS RESPONSE HANDLER-->
+
+    <!-- Masterpass Authorization Response Handler-->
+    <bean id="masterpassAuthorizationResponseHandler" parent="orderRecalculationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.MasterpassPaymentInfoModel"/>
+    </bean>
+
+    <!-- Masterpass Authorization Return Response Handler-->
+    <bean id="wirecardMasterpassAuthorizationReturnResponseHandler" parent="defaultOrderResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.WirecardMasterpassAuthorizationReturnResponseHandler">
+        <property name="wirecardPaymentService" ref="wirecardPaymentService"/>
+    </bean>
+
+    <!--Masterpass CAPTURE CONVERTER-->
+    <bean id="masterpassPaymentCaptureConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="creditCardPaymentMethodsPopulator"/>
+                <ref bean="captureAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Masterpass CANCEL CONVERTER-->
+    <bean id="masterpassAuthorizationCancelConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="creditCardPaymentMethodsPopulator"/>
+                <ref bean="voidAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Masterpass REFUND CONVERTER-->
+    <bean id="masterpassPaymentRefundConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="creditCardPaymentMethodsPopulator"/>
+                <ref bean="refundCaptureTransactionTypePopulator"/>
+                <ref bean="captureParentTransactionIdPopulator"/>
+                <!-- overwrites the amount to refund -->
+                <ref bean="defaultPaymentRefundPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

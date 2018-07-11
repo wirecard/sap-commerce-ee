@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<payment xmlns="http://www.elastic-payments.com/schema/payment">
+    <merchant-account-id>495d7083-3dc9-444d-bac6-3e110f2c8609</merchant-account-id>
+    <request-id>${requestId}</request-id>
+    <transaction-type>refund-capture</transaction-type>
+    <requested-amount currency="EUR">1.03</requested-amount>
+    <parent-transaction-id>${transactionId}</parent-transaction-id>
+    <payment-methods>
+        <payment-method name="paypal"/>
+    </payment-methods>
+</payment>

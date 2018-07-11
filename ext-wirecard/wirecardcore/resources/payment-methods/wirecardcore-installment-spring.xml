@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-wirecard-install"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="AUTHORIZATION" value-ref="installmentAuthorizationPaymentOperation"/>
+                <entry key-ref="AUTHORIZATION_RETURN" value-ref="installmentAuthorizationReturnPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="CAPTURE" value-ref="installmentCapturePaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="installmentCancelPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="installmentRefundPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - Installments -->
+    <!--Installment Payment Operation-->
+    <bean id="installmentAuthorizationPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="installmentPaymentAuthorizationConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationPaymentCommand"/>
+        <property name="responseHandler" ref="installmentAuthorizationResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationUrlPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Installment Capture Operation-->
+    <bean id="installmentCapturePaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="installmentPaymentCaptureConverter"/>
+        <property name="paymentCommand" ref="defaultCapturePaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="capturePaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Installment Cancel Operation-->
+    <bean id="installmentCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="installmentAuthorizationCancelConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationCancelCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Installment Return Operation-->
+    <bean id="installmentAuthorizationReturnPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentCommand" ref="noopWirecardPaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Installment Refund Operation-->
+    <bean id="installmentRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="installmentPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="defaultRefundPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+    </bean>
+
+    <!-- Installment RESPONSE HANDLER-->
+
+    <!-- Installment Authorization Response Handler-->
+    <bean id="installmentAuthorizationResponseHandler" parent="orderRecalculationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.InstallmentPaymentInfoModel"/>
+    </bean>
+
+    <!--Installment CONVERTER-->
+
+    <!--Installment AUTHORIZATION CONVERTER-->
+    <bean id="installmentPaymentAuthorizationConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="installmentPaymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPercentagePopulator"/>
+                <ref bean="authorizationTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Installment CAPTURE CONVERTER-->
+    <bean id="installmentPaymentCaptureConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="installmentPaymentMethodsPopulator"/>
+                <ref bean="captureAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPercentagePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Installment CANCEL CONVERTER-->
+    <alias name="installmentAuthorizationCancelConverter" alias="installmentAuthorizationCancelConverter"/>
+    <bean id="installmentAuthorizationCancelConverter" parent="defaultAuthorizationCancelConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="installmentPaymentMethodsPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Installment REFUND CONVERTER-->
+    <bean id="installmentPaymentRefundConverter" parent="defaultPaymentRefundConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="installmentPaymentMethodsPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Installment POPULATOR -->
+
+    <bean id="installmentPaymentMethodsPopulator" class="com.wirecard.hybris.facades.populators.payment.PaymentMethodsPopulator">
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+        <property name="paymentMethodName" value="RATEPAY_INSTALL"/>
+    </bean>
+
+</beans>

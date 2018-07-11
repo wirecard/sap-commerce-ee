@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-poipia"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="AUTHORIZATION" value-ref="poipiaAuthorizationPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="poipiaCancelPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+
+    <!--PAYMENT OPERATIONS - POI/PIA -->
+    <!--POI/PIA Payment Operation-->
+    <bean id="poipiaAuthorizationPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="poipiaAuthorizationPaymentConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationPaymentCommand"/>
+        <property name="responseHandler" ref="poipiaAuthorizationResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!--POI/PIA Cancel Operation-->
+    <bean id="poipiaCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="poipiaPaymentCancelConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationCancelCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!-- POI/PIA RESPONSE HANDLER-->
+
+    <!-- POI/PIA Authorization Response Handler-->
+    <bean id="poipiaAuthorizationResponseHandler" parent="orderRecalculationResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.WirecardPoipiaAuthorizacionResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.PoipiaPaymentInfoModel"/>
+    </bean>
+
+    <!-- POI/PIA Authorization Payment Converter-->
+    <alias name="poipiaAuthorizationPaymentConverter" alias="poipiaAuthorizationPaymentConverter"/>
+    <bean id="poipiaAuthorizationPaymentConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="poipiaPaymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+                <ref bean="authorizationTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--POI/PIA CANCEL CONVERTER-->
+    <alias name="poipiaPaymentCancelConverter" alias="poipiaPaymentCancelConverter"/>
+    <bean id="poipiaPaymentCancelConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="poipiaPaymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="voidAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="poipiaPaymentMethodsPopulator" class="com.wirecard.hybris.facades.populators.payment.PaymentMethodsPopulator">
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+        <property name="paymentMethodName" value="WIRETRANSFER"/>
+    </bean>
+
+</beans>

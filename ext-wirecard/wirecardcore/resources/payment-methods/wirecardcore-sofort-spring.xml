@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-sofort"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="DEBIT" value-ref="sofortDebitPaymentOperation"/>
+                <entry key-ref="DEBIT_RETURN" value-ref="debitReturnPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="debitRefundPaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="debitCancelPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - SOFORT -->
+    <!--Sofort Payment Operation-->
+    <bean id="sofortDebitPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="debitPaymentConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="sofortDebitResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="debitUrlPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!-- SOFORT RESPONSE HANDLER-->
+    <!-- Sofort Authorization Response Handler-->
+    <bean id="sofortDebitResponseHandler" parent="orderRecalculationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.SofortPaymentInfoModel"/>
+    </bean>
+
+
+</beans>

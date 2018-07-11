@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<payment xmlns="http://www.elastic-payments.com/schema/payment">
+    <merchant-account-id>9abf05c1-c266-46ae-8eac-7f87ca97af28</merchant-account-id>
+    <transaction-id>5e13c4a0-6122-11e5-8db5-005056a96a54</transaction-id>
+    <request-id>22-09-2015 140633</request-id>
+    <transaction-type>authorization</transaction-type>
+    <transaction-state>success</transaction-state>
+    <completion-time-stamp>2015-09-22T12:06:35.000Z</completion-time-stamp>
+    <statuses>
+        <status code="201.0000" description="The resource was successfully created." severity="information"></status>
+    </statuses>
+    <requested-amount currency="EUR">6.66</requested-amount>
+    <account-holder>
+        <first-name>John</first-name>
+        <last-name>Constantine</last-name>
+    </account-holder>
+    <shipping>
+        <first-name>Jack</first-name>
+        <last-name>Jones</last-name>
+        <phone>+49123123123</phone>
+        <address>
+            <street1>123 anystreet</street1>
+            <city>Brantford</city>
+            <country>CA</country>
+            <postal-code>M4P1E8</postal-code>
+        </address>
+    </shipping>
+    <order-number>48090</order-number>
+    <descriptor>customerStatement 18009998888</descriptor>
+    <payment-methods>
+        <payment-method url="https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&amp;useraction=commit&amp;token=EC-028797679A758525U" name="paypal"/>
+    </payment-methods>
+    <cancel-redirect-url>https://www.somedomain.de</cancel-redirect-url>
+    <success-redirect-url>https://www.somedomain.de</success-redirect-url>
+</payment>

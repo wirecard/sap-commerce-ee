@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- [y] hybris Platform Copyright (c) 2017 SAP SE or an SAP affiliate company. All rights reserved. This software is the 
+    confidential and proprietary information of SAP ("Confidential Information"). You shall not disclose such Confidential Information 
+    and shall use it only in accordance with the terms of the license agreement you entered into with SAP. -->
+<!-- ATTENTION: This is just an example file. You have to edit it according to your needs. -->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+    <!-- Example Data POJO <bean class="com.wirecard.hybris.core.data.AbstractPojo" abstract="true"> <property name="id" 
+        type="String"/> <property name="flag" type="boolean"/> </bean> <bean class="com.wirecard.hybris.core.data.MyPojo" extends="com.wirecard.hybris.core.data.AbstractPojo"> 
+        <property name="message" type="String"/> </bean> <bean class="com.wirecard.hybris.core.data.AnnotatedPojo"> <import type="javax.xml.bind.annotation.XmlRootElement"/> 
+        <import type="javax.xml.bind.annotation.XmlElements"/> <import type="javax.xml.bind.annotation.XmlElement"/> <annotations>@XmlRootElement</annotations> 
+        <property name="someText" type="String"> <annotations scope="getter"> @XmlElements(value = { @XmlElement(name="map", type=ValueAsMap.class), 
+        @XmlElement(name="string", type=ValueAsString.class) }) </annotations> </property> </bean> <bean class="de.hybris.platform.catalog.data.Equals1"> 
+        <property name="a1" type="boolean" equals="true"/> <property name="a2" type="int" equals="true"/> <property name="a3" type="String" 
+        equals="true"/> <property name="a4" type="de.hybris.platform.catalog.data.AbstractValue" equals="true"/> <property name="not4Equals" 
+        type="java.lang.Double"/> </bean> <bean class="de.hybris.platform.catalog.data.Equals2" extends="de.hybris.platform.catalog.data.Equals1" 
+        superEquals="true"> <property name="a5" type="java.lang.Integer" equals="true"/> <property name="a6" type="java.util.List" 
+        equals="true"/> <property name="not4Equals" type="java.lang.Double"/> </bean> -->
+
+    <bean class="com.wirecard.hybris.core.converter.data.PaymentModeData">
+        <property name="code" type="String"/>
+        <property name="paymentAlias" type="String"/>
+        <property name="name" type="String"/>
+        <property name="description" type="String"/>
+        <property name="media" type="de.hybris.platform.cmsfacades.data.MediaData"/>
+        <property name="supportedBillingCountries" type="java.util.List"/>
+        <property name="showOptionalFormField" type="java.lang.Boolean"/>
+        <property name="sameAddress" type="java.lang.Boolean"/>
+    </bean>
+
+    <bean class="com.wirecard.hybris.core.data.AppliedTaxData">
+        <property name="currencyIso" type="String"/>
+        <property name="valuePercentage" type="String"/>
+        <property name="value" type="java.math.BigDecimal"/>
+        <property name="base" type="java.math.BigDecimal"/>
+        <property name="total" type="java.math.BigDecimal"/>
+        <property name="formatedValueTax" type="String"/>
+        <property name="fomatedValuePercentage" type="String"/>
+        <property name="formatedValueBase" type="String"/>
+        <property name="formatedValueTotal" type="String"/>
+    </bean>
+
+
+    <bean class="com.wirecard.hybris.core.converter.data.WirecardPaymentInfoData"
+          extends="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData">
+        <property name="token" type="String"/>
+        <property name="iban" type="String"/>
+        <property name="bic" type="String"/>
+        <property name="providerTransactionReferenceId" type="String"/>
+        <property name="bankName" type="String"/>
+        <property name="branchCity" type="String"/>
+        <property name="branchState" type="String"/>
+        <property name="branchAddress" type="String"/>
+    </bean>
+
+    <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
+        <property name="wirecardPaymentInfo" type="com.wirecard.hybris.core.converter.data.WirecardPaymentInfoData"/>
+        <property name="paymentStatus" type="de.hybris.platform.core.enums.PaymentStatus"/>
+        <property name="paymentMode" type="com.wirecard.hybris.core.converter.data.PaymentModeData"/>
+    </bean>
+
+    <!--Request Data to send Wirecard API on Credit Card Payment Mode-->
+    <bean class="com.wirecard.hybris.core.data.WirecardRequestData">
+        <property name="merchantAccountId" type="String"/>
+        <property name="requestId" type="String"/>
+        <property name="requestTimeStamp" type="String"/>
+        <property name="paymentMethod" type="String"/>
+        <property name="transactionType" type="String"/>
+        <property name="requestedAmount" type="String"/>
+        <property name="requestedAmountCurrency" type="String"/>
+        <property name="locale" type="String"/>
+        <property name="requestSignature" type="String"/>
+    </bean>
+
+    <bean class="com.wirecard.hybris.core.data.WirecardPaymentMethodParameters">
+        <property name="paymentMethodChosen" type="String"/>
+        <property name="tokenId" type="String"/>
+        <property name="isSavedCC" type="String"/>
+        <property name="bankAccountOwner" type="String"/>
+        <property name="iban" type="String"/>
+        <property name="bic" type="String"/>
+    </bean>
+
+    <!--SEPA Mandate Data to show to the customer-->
+    <bean class="com.wirecard.hybris.core.data.SepaMandateData">
+        <property name="creditorName" type="String"/>
+        <property name="creditorId" type="String"/>
+        <property name="storeCity" type="String"/>
+    </bean>
+
+</beans>

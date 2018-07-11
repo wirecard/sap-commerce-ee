@@ -1,0 +1,35 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform 
+# 
+# Copyright (c) 2000-2016 hybris AG
+# All rights reserved.
+#  
+# This software is the confidential and proprietary information of hybris 
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with hybris.
+#
+#  
+# -----------------------------------------------------------------------
+
+# you can put key/value pairs here.
+# Use Config.getParameter(..) to retrieve the values during runtime.
+
+wirecardaddon.key=value
+
+# Specifies the location of the spring context file added automatically to the global platform application context.
+wirecardaddon.application-context=wirecardaddon-spring.xml
+
+yacceleratorstorefront.additionalWebSpringConfigs.wirecardaddon=classpath:/wirecardaddon/web/spring/wirecardaddon-web-spring.xml
+
+wirecardaddon.javascript.paths.responsive=/responsive/common/js/wirecardaddon.js
+wirecardaddon.css.paths.responsive=/responsive/common/css/wirecardaddon.css
+
+payment.form.send.url=/[^/]+(/[^?]*)+(/wirecard/payment-method/add)/?$
+payment.pares.url=/[^/]+(/[^?]*)+(/wirecard/return/wd-creditcard-3dsonly/pares|/wirecard/return/wd-creditcard-3dsattempt/pares)/?$
+payment.paypal.return.url=/[^/]+(/[^?]*)+(/wirecard/return/paypal)/?$
+payment.masterpass.return.url=/[^/]+(/[^?]*)+(/wirecard/return/masterpass)/?$
+payment.debit.return.url=/[^/]+(/[^?]*)+(/wirecard/return/debit)/?$
+payment.paymentnotifications.url=/[^/]+(/[^?]*)+(/wirecard/paymentnotifications)/?$
+payment.ratepay-install.return.url=/[^/]+(/[^?]*)+(/wirecard/return/ratepayinstall)/?$
+payment.ratepay-invoice.return.url=/[^/]+(/[^?]*)+(/wirecard/return/ratepayinvoice)/?$

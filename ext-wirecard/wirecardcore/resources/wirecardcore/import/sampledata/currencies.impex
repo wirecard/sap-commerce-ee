@@ -1,0 +1,34 @@
+INSERT_UPDATE Currency; isocode[unique = true]; conversion; digits; symbol; name[lang = 'en']; name[lang = 'de']; active[default = true]
+;AED;1;2;‎د.إ;United Arab Emirates dirham;United Arab Emirates dirham
+;ARS;1;2;$;Argentine peso;Argentine peso
+;AUD;1;2;$;Australian dollar;Australian dollar
+;BGN;1;2;лв;Bulgarian lev;Bulgarian lev
+;BRL;1;2;R$;Brazilian real;Brazilian real
+;CAD;1;2;$;Canadian dollar;Kanadische dollar
+;CHF;1;2;SFr;Swiss franc;Schweizer Franken
+;CLP;1;2;$;Chilean peso;Chilean peso
+;CNY;1;2;¥;Renminbi;Renminbi
+;CZK;1;2;Kč;Czech koruna;Czech koruna
+;DKK;1;2;kr;Danish krone;Danish krone
+;GBP;1;2;£;Pound sterling;Pound sterling
+;HKD;1;2;$;Hong Kong dollar;Hong Kong dollar
+;HUF;1;2;Ft;Hungarian forint;Hungarian forint
+;ILS;1;2;₪;Israeli new shekel;Israeli new shekel
+;INR;1;2;₹;Indian rupee;Indian rupee
+;JPY;1;0;¥;Japanese yen;Japanese yen
+;KRW;1;0;₩;South Korean won;South Korean won
+;NOK;1;2;kr;Norwegian krone;Norwegische Krone
+;MAD;1;2;MAD;Moroccan dirham;Moroccan dirham
+;MXN;1;2;$;Mexican peso;Mexican peso
+;NZD;1;2;$;New Zealand dollar;New Zealand dollar
+;PLN;1;2;zł;Polish złoty;Polish złoty
+;RON;1;2;leu;Romanian leu;Romanian leu
+;RUB;1;2;₽;Russian ruble;Russian ruble
+;SEK;1;2;kr;Swedish krona;Swedish krona
+;SGD;1;2;$;Singapore dollar;Singapore dollar
+;THB;1;2;฿;Thai baht;Thai baht
+;TRY;1;2;₺;Turkish lira;Turkish lira
+;TWD;1;2;$;New Taiwan dollar;New Taiwan dollar
+;UAH;1;2;₴;Ukrainian hryvnia;Ukrainian hryvnia
+;VEF;1;2;Bs.F.;Venezuelan bolívar;Venezuelan bolívar
+;ZAR;1;2;R;South African rand;South African rand

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<payment xmlns="http://www.elastic-payments.com/schema/payment">
+    <merchant-account-id>9abf05c1-c266-46ae-8eac-7f87ca97af28</merchant-account-id>
+    <transaction-id>5e13c4a0-6122-11e5-8db5-005056a96a54</transaction-id>
+    <request-id>22-09-2015 140633</request-id>
+    <transaction-type>authorization</transaction-type>
+    <transaction-state>success</transaction-state>
+    <completion-time-stamp>2015-09-22T12:06:35.000Z</completion-time-stamp>
+    <statuses>
+        <status code="201.0000" description="The resource was successfully created." severity="information"></status>
+    </statuses>
+    <requested-amount currency="EUR">6.66</requested-amount>
+    <ip-address>127.0.0.1</ip-address>
+    <payment-methods>
+        <payment-method url="https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&amp;useraction=commit&amp;token=EC-028797679A758525U" name="paypal"/>
+    </payment-methods>
+    <api-id>---</api-id>
+</payment>

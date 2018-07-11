@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2017 SAP SE or an SAP affiliate company.  All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+
+INSERT_UPDATE StandardPaymentMode; code[unique = true]; active[default = true]
+; wd-paypal                ;
+; wd-creditcard            ;
+; wd-creditcard-3dsattempt ;
+; wd-creditcard-3dsonly    ;
+; wd-masterpass            ;
+; wd-sofort                ;
+; wd-alipay-xborder        ;
+; wd-ideal                 ;
+; wd-sepa                  ;
+; wd-poipia                ;
+; wd-wirecard-invoice      ;
+; wd-unionpayinternational ;
+

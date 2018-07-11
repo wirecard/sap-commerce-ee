@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- [y] hybris Platform Copyright (c) 2017 SAP SE or an SAP affiliate company. All rights reserved. This software is the 
+    confidential and proprietary information of SAP ("Confidential Information"). You shall not disclose such Confidential Information 
+    and shall use it only in accordance with the terms of the license agreement you entered into with SAP. -->
+<!-- ATTENTION: This is just an example file. You have to edit it according to your needs. -->
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
+    <collectiontypes>
+        <collectiontype code="CurrencyCollection" elementtype="Currency" type="set"/>
+    </collectiontypes>
+    <enumtypes>
+        <enumtype code="CreditCardType" autocreate="false" generate="false">
+            <value code="CREDITCARD"/>
+            <value code="AURA"/>
+            <value code="CARTEBANCAIRE"/>
+            <value code="CARTEBLEUE"/>
+            <value code="CUP"/>
+            <value code="DISCOVER"/>
+            <value code="EXPRESSCHECKOUT"/>
+            <value code="HYPERCARD"/>
+            <value code="JCB"/>
+            <value code="MAESTROUK"/>
+            <value code="MASTERCARD"/>
+            <value code="MYDEBIT"/>
+            <value code="SOROCRED"/>
+            <value code="UATP"/>
+            <value code="VPAY"/>
+            <value code="UPI"/>
+            <value code="MIR"/>
+        </enumtype>
+        <enumtype code="PaymentTransactionType" autocreate="false" generate="false">
+            <value code="AUTHORIZATION_GET_URL"/>
+            <value code="CHECK_ENROLLMENT"/>
+            <value code="NOTIFICATION"/>
+            <value code="AUTHORIZATION_NOTIFICATION"/>
+            <value code="CAPTURE_NOTIFICATION"/>
+            <value code="DEBIT_GET_URL"/>
+            <value code="DEBIT"/>
+            <value code="DEBIT_NOTIFICATION"/>
+        </enumtype>
+        <enumtype code="WirecardTransactionType">
+            <value code="AUTHORIZE"/>
+            <value code="PURCHASE"/>
+            <value code="PURCHASE_WITH_HOP"/>
+        </enumtype>
+
+        <enumtype code="PaymentStatus" autocreate="false" generate="false">
+            <value code="PENDING"/>
+            <value code="ERROR"/>
+        </enumtype>
+
+    </enumtypes>
+    <relations>
+        <relation code="BaseStore2WirecardPaymentConfiguration" localized="false">
+            <sourceElement qualifier="baseStore" type="BaseStore" cardinality="one">
+                <modifiers unique="true" optional="false"/>
+            </sourceElement>
+            <targetElement qualifier="paymentConfigurations" type="WirecardPaymentConfiguration"
+                           cardinality="many" collectiontype="list" ordered="true"/>
+        </relation>
+
+        <relation code="PaymentMode2WirecardPaymentConfiguration" localized="false">
+            <sourceElement qualifier="paymentMode" type="PaymentMode" cardinality="one">
+                <modifiers unique="true" optional="false"/>
+            </sourceElement>
+            <targetElement qualifier="paymentConfigurations" type="WirecardPaymentConfiguration" cardinality="many"/>
+        </relation>
+    </relations>
+    <itemtypes>
+        <itemtype code="Product"
+                  autocreate="false"
+                  generate="false">
+            <attributes>
+                <attribute qualifier="digital" type="java.lang.Boolean">
+                    <persistence type="property"/>
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="PaymentMode"
+                  autocreate="false"
+                  generate="false">
+            <attributes>
+                <attribute qualifier="paymentAlias" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>Value of the payment method</description>
+                </attribute>
+                <attribute qualifier="media" type="localized:Media">
+                    <persistence type="property"/>
+                    <modifiers/>
+                    <description>Localized media that is displayed in the component.</description>
+                </attribute>
+                <attribute qualifier="transactionType" type="WirecardTransactionType">
+                    <persistence type="property"/>
+                    <description>Type of transaction.</description>
+                    <defaultvalue>com.wirecard.hybris.core.data.types.TransactionType.AUTHORIZATION</defaultvalue>
+                    <modifiers optional="false"/>
+                </attribute>
+                <attribute qualifier="showOptionalFormField" type="java.lang.Boolean">
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    <persistence type="property"/>
+                    <description>if true, the optional field is displayed.</description>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="PaymentTransaction"
+                  autocreate="false"
+                  generate="false">
+            <attributes>
+                <attribute qualifier="pares" type="java.lang.String">
+                    <persistence type="property">
+                        <columntype database="oracle">
+                            <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                            <value>NCLOB</value>
+                        </columntype>
+                        <columntype database="mysql">
+                            <value>TEXT</value>
+                        </columntype>
+                        <columntype database="sqlserver">
+                            <value>TEXT</value>
+                        </columntype>
+                        <columntype>
+                            <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                    </persistence>
+                    <description>The pares payment response</description>
+                </attribute>
+                <attribute qualifier="tokenId" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>The payment tokenid.</description>
+                </attribute>
+                <attribute qualifier="cardholderAuthenticationStatus" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>The payment threeD cardholder-authentication-status.</description>
+                </attribute>
+                <attribute qualifier="cardholderAuthenticationValue" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>The payment threeD cardholder-authentication-value.</description>
+                </attribute>
+                <attribute qualifier="eci" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>The payment threeD eci.</description>
+                </attribute>
+                <attribute qualifier="xid" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>The payment threeD xid.</description>
+                </attribute>
+                <attribute qualifier="authentication" type="WirecardAuthentication">
+                    <persistence type="property"/>
+                    <description>The payment authentication.</description>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="PaymentTransactionEntry"
+                  autocreate="false"
+                  generate="false">
+            <attributes>
+                <attribute qualifier="xmlFiles" type="MediaCollection">
+                    <persistence type="property"/>
+                    <description>Media list that that stores the xml of the request and response</description>
+                </attribute>
+                <attribute qualifier="providerTransactionId" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>Id of the provider transaction</description>
+                </attribute>
+                <attribute qualifier="providerTransactionReferenceId" type="java.lang.String">
+                    <persistence type="property"/>
+                    <description>Id of the provider transaction reference</description>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="BaseStore" autocreate="false" generate="false">
+            <attributes>
+                <attribute qualifier="wirecardCertificate" type="CatalogUnawareMedia">
+                    <persistence type="property"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <typegroup name="PaymentConfiguration">
+            <itemtype code="WirecardPaymentConfiguration" jaloclass="com.wirecard.hybris.core.jalo.WirecardPaymentConfiguration">
+                <description>Payment mode configuration for a specific store</description>
+                <deployment table="WcdPaymentConfiguration" typecode="20229"/>
+                <attributes>
+                    <!-- attributes which are used for filtering -->
+                    <attribute qualifier="enabled" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="currencies" type="CurrencyCollection">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="shippingCountries" type="CountryCollection">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="billingCountries" type="CountryCollection">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="totalAmountMin" type="java.lang.Double">
+                        <description>The minimum of the total amount (inclusive)</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="totalAmountMax" type="java.lang.Double">
+                        <description>The maximum of the total amount (exclusive)</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="totalAmountCurrency" type="Currency">
+                        <description>The currency of the total amount</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="years" type="java.lang.Short">
+                        <description>The minimum allowed customer age</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="restrictDigitalProducts" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="restrictPromotions" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="sameAddress" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <!-- attributes which are used for authentication -->
+                    <attribute qualifier="authentication" type="WirecardAuthentication">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                    </attribute>
+                    <attribute qualifier="fallbackAuthentication" type="WirecardAuthentication">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="WirecardAuthentication" jaloclass="com.wirecard.hybris.core.jalo.WirecardAuthentication">
+                <description>Wirecard credentials for a payment configuration</description>
+                <deployment table="WcdAuthentication" typecode="20230"/>
+                <attributes>
+                    <attribute qualifier="code" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers unique="true" optional="false"/>
+                    </attribute>
+                    <attribute qualifier="maid" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                    </attribute>
+                    <attribute qualifier="secret" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                    </attribute>
+                    <attribute qualifier="username" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                    </attribute>
+                    <attribute qualifier="password" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                    </attribute>
+                    <attribute qualifier="baseUrl" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                    </attribute>
+                    <!-- attributes for legal advertisement -->
+                    <attribute qualifier="creditorName" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                    </attribute>
+                    <attribute qualifier="creditorId" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                    </attribute>
+                    <attribute qualifier="storeCity" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers optional="true"/>
+                        <description>The city of store</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup name="PaymentInfo">
+            <itemtype code="WirecardPaymentInfo"
+                      extends="PaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="PaypalPaymentInfo"
+                      extends="WirecardPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="CreditCardPaymentInfo" autocreate="false"
+                      generate="false">
+                <description>Extending CreditCardPaymentInfo type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="token" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            <itemtype code="WirecardDebitPaymentInfo"
+                      extends="WirecardPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+                <attributes>
+                    <attribute qualifier="iban" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="bic" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            <itemtype code="SofortPaymentInfo"
+                      extends="WirecardDebitPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="IdealPaymentInfo"
+                      extends="WirecardDebitPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="SepaPaymentInfo"
+                      extends="WirecardDebitPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+                <attributes>
+                    <attribute qualifier="accountOwner" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="creditorId" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="dueDate" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="mandateId" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="mandateSignedDate" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            <itemtype code="MasterpassPaymentInfo"
+                      extends="WirecardPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="AlipayXborderPaymentInfo"
+                      extends="WirecardPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="InstallmentPaymentInfo"
+                      extends="WirecardPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+            <itemtype code="PoipiaPaymentInfo"
+                      extends="WirecardDebitPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+                <attributes>
+                    <attribute qualifier="providerTransactionReferenceId" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="bankName" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="branchCity" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="branchState" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="branchAddress" type="java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            <itemtype code="RatepayInvoicePaymentInfo"
+                      extends="WirecardPaymentInfo"
+                      jaloclass="de.hybris.platform.jalo.order.payment.PaymentInfo"
+                      generate="false">
+            </itemtype>
+        </typegroup>
+    </itemtypes>
+</items>

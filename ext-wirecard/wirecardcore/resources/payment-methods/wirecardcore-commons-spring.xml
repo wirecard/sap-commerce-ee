@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--GenerateDescriptor Strategy-->
+
+    <alias name="defaultWirecardDescriptorGenerateStrategy" alias="descriptorGenerateStrategy"/>
+    <bean id="defaultWirecardDescriptorGenerateStrategy"
+          class="com.wirecard.hybris.core.strategy.impl.DefaultWirecardDescriptorGenerateStrategy">
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <!--Default notification Operation-->
+    <bean id="defaultNotificationPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentCommand" ref="noopWirecardPaymentCommand"/>
+        <property name="responseHandler" ref="notificationResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="notificationPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--PaymentOperations Strategy-->
+    <util:map id="wirecardPaymentOperationConverterMap"/>
+
+    <alias name="defaultWirecardPaymentOperationStrategy" alias="wirecardPaymentOperationStrategy"/>
+    <bean id="defaultWirecardPaymentOperationStrategy"
+          class="com.wirecard.hybris.core.strategy.impl.DefaultWirecardPaymentOperationStrategy">
+        <property name="converterMap" ref="wirecardPaymentOperationConverterMap"/>
+    </bean>
+
+    <!--Payment transaction constants-->
+    <util:constant id="AUTHORIZATION3d" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.AUTHORIZATION3D" />
+    <util:constant id="AUTHORIZATION" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.AUTHORIZATION" />
+    <util:constant id="AUTHORIZATION_RETURN" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.AUTHORIZATION_RETURN" />
+    <util:constant id="CAPTURE" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.CAPTURE" />
+    <util:constant id="DEBIT" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.DEBIT" />
+    <util:constant id="DEBIT_RETURN" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.DEBIT_RETURN" />
+    <util:constant id="CANCEL" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.CANCEL" />
+    <util:constant id="REFUND_FOLLOW_ON" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.REFUND_FOLLOW_ON" />
+    <util:constant id="NOTIFICATION" static-field="com.wirecard.hybris.core.constants.WirecardPaymentTransactionConstants.NOTIFICATION" />
+
+    <!--Signature Strategy-->
+    <bean id="defaultWirecardSignatureStrategy"
+          class="com.wirecard.hybris.core.strategy.impl.DefaultWirecardSignatureStrategy">
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <bean id="wirecardObjectFactory"
+          class="com.wirecard.hybris.core.data.types.ObjectFactory"/>
+
+    <!--PAYMENT OPERATIONS Abstract Operation-->
+    <bean id="abstractPaymentOperation" abstract="true" class="com.wirecard.hybris.core.operation.impl.DefaultPaymentOperation">
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+        <property name="fallBack" value="false"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="parentOperation" value="false"/>
+    </bean>
+
+    <bean id="defaultCapturePaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="defaultPaymentCaptureConverter"/>
+        <property name="paymentCommand" ref="defaultCapturePaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="capturePaymentTransactionStrategy" />
+    </bean>
+
+    <bean id="defaultCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="authorizationCancelConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationCancelCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+    </bean>
+
+    <bean id="defaultRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="defaultPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="defaultRefundPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+    </bean>
+
+    <bean id="debitReturnPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentCommand" ref="noopWirecardPaymentCommand"/>
+        <property name="responseHandler" ref="wirecardDebitReturnResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="debitPaymentTransactionStrategy"/>
+    </bean>
+
+    <bean id="debitRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="debitPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+        <property name="fallBack" value="true"/>
+    </bean>
+
+    <bean id="debitCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="debitPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+        <property name="fallBack" value="true"/>
+    </bean>
+
+    <!-- Abstract Order Response Handler-->
+    <bean id="abstractResponseHandler" class="com.wirecard.hybris.core.payment.response.impl.AbstractResponseHandler" abstract="true">
+        <property name="modelService" ref="modelService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+        <property name="commerceCheckoutService" ref="commerceCheckoutService"/>
+    </bean>
+
+    <bean id="defaultOrderResponseHandler" parent="abstractResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.DefaultOrderResponseHandler">
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+        <property name="needsRecalculation" value="false"/>
+    </bean>
+
+    <bean id="orderRecalculationResponseHandler" parent="defaultOrderResponseHandler">
+        <property name="needsRecalculation" value="true"/>
+    </bean>
+
+
+    <!-- Debit Authorization Return Response Handler-->
+    <bean id="wirecardDebitReturnResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.WirecardDebitReturnResponseHandler"
+          parent="defaultOrderResponseHandler"/>
+
+    <bean id="defaultWirecardPaymentCommand"
+          class="com.wirecard.hybris.core.payment.command.impl.DefaultWirecardPaymentCommand" abstract="true">
+        <property name="paymentCommandService" ref="defaultWirecardPaymentCommandService"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <bean id="defaultAuthorizationPaymentCommand" parent="defaultWirecardPaymentCommand">
+        <property name="requestUrl" value="wirecard.url.authorization"/>
+    </bean>
+
+    <bean id="defaultCapturePaymentCommand" parent="defaultWirecardPaymentCommand">
+        <property name="requestUrl" value="wirecard.url.capture"/>
+    </bean>
+
+    <bean id="defaultAuthorizationCancelCommand" parent="defaultWirecardPaymentCommand">
+        <property name="requestUrl" value="wirecard.url.cancel"/>
+    </bean>
+
+    <bean id="defaultRefundPaymentCommand" parent="defaultWirecardPaymentCommand">
+        <property name="requestUrl" value="wirecard.url.refund"/>
+    </bean>
+
+    <bean id="noopWirecardPaymentCommand" class="com.wirecard.hybris.core.payment.command.impl.NoOperationWirecardPaymentCommand"/>
+
+    <!-- Debit Payment Command-->
+    <bean id="debitPaymentCommand" parent="defaultWirecardPaymentCommand">
+        <property name="requestUrl" value="wirecard.url.debit"/>
+    </bean>
+
+    <!-- Payment transaction strategies -->
+    <bean id="authorizationPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="AUTHORIZATION"/>
+    </bean>
+
+    <bean id="authorizationUrlPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="AUTHORIZATION_GET_URL"/>
+    </bean>
+
+    <bean id="checkEnrollmentPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="CHECK_ENROLLMENT"/>
+    </bean>
+
+    <bean id="capturePaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="CAPTURE"/>
+    </bean>
+
+    <bean id="debitPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="DEBIT"/>
+    </bean>
+
+    <bean id="debitUrlPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="DEBIT_GET_URL"/>
+    </bean>
+
+    <bean id="cancelPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="CANCEL"/>
+    </bean>
+
+    <bean id="refundPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.DefaultTransactionTypeStrategy">
+        <property name="transactionType" value="REFUND_FOLLOW_ON"/>
+    </bean>
+
+    <bean id="notificationPaymentTransactionStrategy" class="com.wirecard.hybris.core.strategy.impl.NotificationTransactionTypeStrategy">
+        <property name="paymentTransactionMapping" ref="paymentTransactionMapping"/>
+    </bean>
+
+    <!-- Default Payment Converter-->
+    <bean id="defaultWirecardPaymentConverter" class="com.wirecard.hybris.core.converter.xml.impl.DefaultWirecardPaymentConverter">
+        <property name="baseStoreService" ref="baseStoreService"/>
+        <property name="mediaService" ref="mediaService"/>
+    </bean>
+
+    <!-- Debit Payment Converter-->
+    <alias name="debitPaymentConverter" alias="debitPaymentConverter"/>
+    <bean id="debitPaymentConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+                <ref bean="debitTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!--Debif Refund Converter-->
+    <alias name="defaultDebitPaymentRefundConverter" alias="debitPaymentRefundConverter"/>
+    <bean id="defaultDebitPaymentRefundConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <bean class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+                      parent="abstractParentTransactionIdPopulator">
+                    <property name="parentPaymentTransactionType" value="DEBIT"/>
+                    <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+                </bean>
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="sepacreditPaymentMethodsPopulator"/>
+                <ref bean="creditTransactionTypePopulator"/>
+                <ref bean="bankAccountPaymentPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- RESPONSE HANDLER-->
+
+    <bean id="defaultRefundResponseHandler" parent="abstractResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.DefaultRefundResponseHandler">
+        <property name="refundAmountCalculationService" ref="refundAmountCalculationService"/>
+    </bean>
+
+    <!--paymentTransactionMapping-->
+    <util:map id="paymentTransactionMapping" key-type="com.wirecard.hybris.core.data.types.TransactionType"
+              value-type="de.hybris.platform.payment.enums.PaymentTransactionType">
+        <entry key="AUTHORIZATION" value="AUTHORIZATION_NOTIFICATION"/>
+        <entry key="CAPTURE_AUTHORIZATION" value="CAPTURE_NOTIFICATION"/>
+        <entry key="DEBIT" value="DEBIT_NOTIFICATION"/>
+    </util:map>
+
+    <!-- Default Notifications Response Handler-->
+    <alias name="wirecardNotificationResponseHandler" alias="notificationResponseHandler"/>
+    <bean id="wirecardNotificationResponseHandler"
+          class="com.wirecard.hybris.core.payment.response.impl.DefaultWirecardNotificationResponseHandler"
+          parent="defaultOrderResponseHandler"/>
+
+    <!-- Wirecard Payment Service-->
+    <bean id="defaultWirecardPaymentCommandService" class="com.wirecard.hybris.core.service.impl.DefaultWirecardPaymentCommandService">
+        <property name="paymentConverter" ref="defaultWirecardPaymentConverter"/>
+        <property name="basicResponseHandler" ref="basicResponseHandler"/>
+    </bean>
+    <bean id="basicResponseHandler" class="org.apache.http.impl.client.BasicResponseHandler"/>
+
+    <bean id="wirecardHopPaymentOperationsFacade" class="com.wirecard.hybris.facades.impl.DefaultWirecardHopPaymentOperationsFacade">
+        <property name="paymentOperationStrategy" ref="wirecardPaymentOperationStrategy"/>
+        <property name="userService" ref="userService"/>
+        <property name="cartService" ref="cartService"/>
+        <property name="addressConverter" ref="addressReverseConverter"/>
+        <property name="paymentConverter" ref="defaultWirecardPaymentConverter"/>
+        <property name="orderModelDao" ref="orderModelDao"/>
+        <property name="sessionService" ref="sessionService"/>
+        <property name="wirecardPaymentModeService" ref="wirecardPaymentModeService"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="paymentCommandService" ref="defaultWirecardPaymentCommandService"/>
+    </bean>
+
+    <bean id="wirecardPaymentService" class="com.wirecard.hybris.core.service.impl.DefaultWirecardPaymentService">
+        <property name="modelService" ref="modelService"/>
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+    </bean>
+
+    <!-- Wirecard Transaction Service-->
+    <bean id="wirecardTransactionService" class="com.wirecard.hybris.core.service.impl.DefaultWirecardTransactionService">
+        <property name="wirecardPaymentService" ref="wirecardPaymentService"/>
+        <property name="modelService" ref="modelService"/>
+        <property name="commerceCheckoutService" ref="commerceCheckoutService"/>
+        <property name="paymentConverter" ref="defaultWirecardPaymentConverter"/>
+        <property name="mediaService" ref="defaultMediaService"/>
+    </bean>
+
+    <!-- Wirecard Payment Mode Service-->
+    <bean id="wirecardPaymentModeService" class="com.wirecard.hybris.core.service.impl.DefaultWirecardPaymentModeService">
+        <property name="paymentModeService" ref="defaultPaymentModeService"/>
+        <property name="modelService" ref="defaultModelService"/>
+    </bean>
+
+    <!-- Wirecard Operation Execution Service-->
+    <bean id="wirecardPaymentOperationExecution"
+          class="com.wirecard.hybris.core.service.impl.DefaultWirecardPOExecutionService">
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+        <property name="wirecardPaymentService" ref="wirecardPaymentService"/>
+        <property name="wirecardPaymentModeService" ref="wirecardPaymentModeService"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="paymentOperationStrategy" ref="wirecardPaymentOperationStrategy"/>
+    </bean>
+
+    <!--CONVERTER TYPES-->
+    <alias name="defaultPaymentModeConverter" alias="paymentModeConverter"/>
+    <bean id="defaultPaymentModeConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.converter.data.PaymentModeData"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="paymentModePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultPaymentModePopulator" alias="paymentModePopulator"/>
+    <bean id="defaultPaymentModePopulator" class="com.wirecard.hybris.facades.populators.DefaultPaymentModePopulator">
+        <property name="mediaConverter" ref="mediaModelConverter"/>
+        <property name="countryConverter" ref="countryConverter"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <!--AUTHORIZATION CONVERTER-->
+    <bean id="defaultPaymentAuthorizationConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+                <ref bean="authorizationTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--CAPTURE CONVERTER-->
+    <bean id="defaultPaymentCaptureConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="captureAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--REFUND CONVERTER-->
+    <bean id="defaultPaymentRefundConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="refundCaptureTransactionTypePopulator"/>
+                <ref bean="captureParentTransactionIdPopulator"/>
+                <!-- overwrites the amount to refund -->
+                <ref bean="defaultPaymentRefundPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Default-->
+    <bean id="omniPaymentPopulator" class="com.wirecard.hybris.facades.populators.payment.OmniPaymentPopulator">
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="descriptorGenerateStrategy" ref="defaultWirecardDescriptorGenerateStrategy"/>
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+        <property name="wirecardHopPaymentOperationsFacade" ref="wirecardHopPaymentOperationsFacade"/>
+    </bean>
+
+    <bean id="paymentMethodsPopulator" class="com.wirecard.hybris.facades.populators.payment.PaymentMethodsPopulator">
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+    </bean>
+
+    <bean id="creditCardPaymentMethodsPopulator" class="com.wirecard.hybris.facades.populators.payment.PaymentMethodsPopulator">
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+        <property name="paymentMethodName" value="CREDITCARD"/>
+    </bean>
+
+    <bean id="sepacreditPaymentMethodsPopulator" class="com.wirecard.hybris.facades.populators.payment.PaymentMethodsPopulator">
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+        <property name="paymentMethodName" value="SEPACREDIT"/>
+    </bean>
+
+    <bean id="personalDataPaymentPopulator" class="com.wirecard.hybris.facades.populators.payment.PersonalDataPaymentPopulator">
+        <property name="consumerConverter" ref="wirecardConsumerConverter"/>
+        <property name="shippingConverter" ref="wirecardShippingConverter"/>
+        <property name="accountHolderConverter" ref="wirecardAccountHolderConverter"/>
+    </bean>
+
+    <bean id="bankAccountPaymentPopulator" class="com.wirecard.hybris.facades.populators.payment.BankAccountPaymentPopulator"/>
+
+    <bean id="creditorIdPopulator" class="com.wirecard.hybris.facades.populators.payment.CreditorIdPopulator">
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <bean id="mandatePopulator" class="com.wirecard.hybris.facades.populators.payment.MandatePopulator"/>
+
+    <bean id="authorizationTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="AUTHORIZATION"/>
+    </bean>
+
+    <bean id="debitTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="DEBIT"/>
+    </bean>
+
+    <bean id="checkEnrollmentTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="CHECK_ENROLLMENT"/>
+    </bean>
+
+    <bean id="captureAuthorizationTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="CAPTURE_AUTHORIZATION"/>
+    </bean>
+
+    <bean id="voidAuthorizationTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="VOID_AUTHORIZATION"/>
+    </bean>
+
+    <bean id="voidCaptureTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="VOID_CAPTURE"/>
+    </bean>
+
+    <bean id="abstractParentTransactionIdPopulator" class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+          abstract="true">
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+    </bean>
+
+    <bean id="refundCaptureTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="REFUND_CAPTURE"/>
+    </bean>
+
+    <bean id="refundDebitTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="REFUND_DEBIT"/>
+    </bean>
+
+    <bean id="creditTransactionTypePopulator" class="com.wirecard.hybris.facades.populators.payment.TransactionTypePopulator">
+        <property name="transactionType" value="CREDIT"/>
+    </bean>
+
+    <bean id="authorizationParentTransactionIdPopulator" class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+          parent="abstractParentTransactionIdPopulator">
+        <property name="parentPaymentTransactionType" value="AUTHORIZATION"/>
+    </bean>
+
+    <bean id="authorizationGetUrlParentTransactionIdPopulator"
+          class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+          parent="abstractParentTransactionIdPopulator">
+        <property name="parentPaymentTransactionType" value="AUTHORIZATION_GET_URL"/>
+    </bean>
+
+    <bean id="checkEnrollmentParentTransactionIdPopulator"
+          class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator" parent="abstractParentTransactionIdPopulator">
+        <property name="parentPaymentTransactionType" value="CHECK_ENROLLMENT"/>
+    </bean>
+
+    <bean id="captureParentTransactionIdPopulator" class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+          parent="abstractParentTransactionIdPopulator">
+        <property name="parentPaymentTransactionType" value="CAPTURE"/>
+    </bean>
+
+    <bean id="defaultPaymentRefundPopulator" class="com.wirecard.hybris.facades.populators.payment.DefaultPaymentRefundPopulator">
+        <property name="refundAmountCalculationService" ref="refundAmountCalculationService"/>
+        <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+    </bean>
+
+    <!--CANCEL CONVERTER-->
+    <alias name="defaultAuthorizationCancelConverter" alias="authorizationCancelConverter"/>
+    <bean id="defaultAuthorizationCancelConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="voidAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Consumer-->
+    <alias name="defaultWirecardConsumerConverter" alias="wirecardConsumerConverter"/>
+    <bean id="defaultWirecardConsumerConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Consumer"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="wirecardConsumerPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--GenderMapping-->
+    <util:map id="genderMapping" key-type="de.hybris.platform.core.enums.Gender" value-type="com.wirecard.hybris.core.data.types.Gender">
+        <entry key="MALE" value="M"/>
+        <entry key="FEMALE" value="F"/>
+    </util:map>
+
+
+    <alias name="defaultWirecardConsumerPopulator" alias="wirecardConsumerPopulator"/>
+    <bean id="defaultWirecardConsumerPopulator" class="com.wirecard.hybris.facades.populators.payment.ConsumerPopulator">
+        <property name="addressConverter" ref="wirecardPaymentAddressConverter"/>
+        <property name="genderMapping" ref="genderMapping"/>
+    </bean>
+
+    <!--Shipping-->
+
+    <alias name="defaultWirecardShippingConverter" alias="wirecardShippingConverter"/>
+    <bean id="defaultWirecardShippingConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Shipping"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="wirecardShippingPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultWirecardShippingPopulator" alias="wirecardShippingPopulator"/>
+    <bean id="defaultWirecardShippingPopulator" class="com.wirecard.hybris.facades.populators.payment.ShippingPopulator">
+        <property name="addressConverter" ref="wirecardPaymentAddressConverter"/>
+    </bean>
+
+    <!--address-->
+    <alias name="defaultWirecardPaymentAddressConverter" alias="wirecardPaymentAddressConverter"/>
+    <bean id="defaultWirecardPaymentAddressConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Address"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="wirecardPaymentAddressPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultWirecardPaymentAddressPopulator" alias="wirecardPaymentAddressPopulator"/>
+    <bean id="defaultWirecardPaymentAddressPopulator" class="com.wirecard.hybris.facades.populators.payment.AddressPopulator"/>
+
+    <!--orderItems-->
+    <alias name="defaultWirecardPaymentOrderItemsConverter" alias="wirecardPaymentOrderItemsConverter"/>
+    <bean id="defaultWirecardPaymentOrderItemsConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultWirecardPaymentOrderItemsPopulator" alias="wirecardPaymentOrderItemsPopulator"/>
+    <bean id="defaultWirecardPaymentOrderItemsPopulator" class="com.wirecard.hybris.facades.populators.payment.OrderItemsPopulator">
+        <property name="wirecardTaxCalculatorStrategy" ref="wirecardAbsoluteTaxCalculatorStrategy"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <alias name="defaultWirecardPaymentOrderItemsPercentagePopulator" alias="wirecardPaymentOrderItemsPercentagePopulator"/>
+    <bean id="defaultWirecardPaymentOrderItemsPercentagePopulator"
+          class="com.wirecard.hybris.facades.populators.payment.OrderItemsPopulator">
+        <property name="wirecardTaxCalculatorStrategy" ref="wirecardPercentageTaxCalculatorStrategy"/>
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
+    <bean id="wirecardAbsoluteTaxCalculatorStrategy" class="com.wirecard.hybris.core.strategy.impl.WirecardAbsoluteTaxCalculatorStrategy"/>
+    <bean id="wirecardPercentageTaxCalculatorStrategy"
+          class="com.wirecard.hybris.core.strategy.impl.WirecardPercentageTaxCalculatorStrategy"/>
+
+    <!--accountHolder  -->
+
+    <alias name="defaultWirecardAccountHolderConverter" alias="wirecardAccountHolderConverter"/>
+    <bean id="defaultWirecardAccountHolderConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.AccountHolder"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="wirecardAccountHolderPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultWirecardAccountHolderPopulator" alias="wirecardAccountHolderPopulator"/>
+    <bean id="defaultWirecardAccountHolderPopulator" class="com.wirecard.hybris.facades.populators.payment.AccountHolderPopulator">
+        <property name="addressConverter" ref="wirecardPaymentAddressConverter"/>
+        <property name="genderMapping" ref="genderMapping"/>
+    </bean>
+
+    <alias name="defaultWirecardPaymentInfoConverter" alias="wirecardPaymentInfoConverter"/>
+    <bean id="defaultWirecardPaymentInfoConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.converter.data.WirecardPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="wirecardPaymentInfoPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultWirecardPaymentInfoPopulator" alias="wirecardPaymentInfoPopulator"/>
+    <bean id="defaultWirecardPaymentInfoPopulator"
+          class="com.wirecard.hybris.facades.populators.WirecardPaymentInfoPopulator">
+        <property name="addressConverter" ref="addressConverter"/>
+    </bean>
+
+    <alias name="defaultWirecardCreditCardPaymentInfoPopulator" alias="wirecardCreditCardPaymentInfoPopulator"/>
+    <bean id="defaultWirecardCreditCardPaymentInfoPopulator"
+          class="com.wirecard.hybris.facades.populators.WirecardCreditCardPaymentInfoPopulator">
+    </bean>
+
+    <alias name="defaultWirecardCCPaymentInfoConverter" alias="wirecardCCPaymentInfoConverter"/>
+    <bean id="defaultWirecardCCPaymentInfoConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.converter.data.WirecardPaymentInfoData"/>
+        <property name="populators">
+            <list>
+                <ref bean="wirecardCreditCardPaymentInfoPopulator"/>
+                <ref bean="creditCardPaymentInfoPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="bankAccountPaymentProcessor"
+          class="com.wirecard.hybris.core.operation.impl.BankAccountPaymentProcessor">
+        <property name="objectFactory" ref="wirecardObjectFactory"/>
+    </bean>
+
+</beans>

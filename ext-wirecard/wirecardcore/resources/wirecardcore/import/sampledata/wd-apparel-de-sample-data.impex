@@ -1,0 +1,56 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2017 SAP SE or an SAP affiliate company.  All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+
+$currencies=GBP,USD,EUR
+$countries=AD,AL,AT,BA,BE,BG,BY,CH,CY,CZ,DE,DK,EE,ES,FI,FO,FR,GI,GL,GR,HR,HU,IE,IS,IT,LI,LT,LU,LV,MC,MD,ME,MK,MT,NL,NO,PL,PT,RO,RS,RU,SE,SI,SK,SM,TR,UA,VA,US,CA
+$sofort-currencies=EUR,CHF,CZK,HUF,PLN,GBP
+$sofort-countries=AT,BE,CH,CZ,DE,ES,FR,IT,HU,NL,PL,SK,GB
+$alipay-xborder-currencies=AUD,CAD,CHF,DKK,EUR,GBP,HKD,JPY,KRW,NOK,NZD,SEK,SGD,THB,USD
+$defaultUrl=https://api-test.wirecard.com
+$ratepayinvoice-currencies=EUR
+$ratepayinvoice-countries=AT,DE
+
+INSERT_UPDATE WirecardAuthentication;code[unique=true];maid;secret;username;password;baseUrl[default='$defaultUrl'];creditorId;creditorName;storeCity
+;wd-paypal-authentication;9abf05c1-c266-46ae-8eac-7f87ca97af28;5fca2a83-89ca-4f9e-8cf7-4ca74a02773f;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-creditcard3d-authentication;33f6d473-3036-4ca5-acb5-8c64dac862d1;9e0130f6-2e1e-4185-b0d5-dc69079c75cc;70000-APILUHN-CARD;8mhwavKVb91T
+;wd-creditcard-authentication;9105bb4f-ae68-4768-9c3b-3eda968f57ea;d1efed51-4cb9-46a5-ba7b-0fdc87a66544;70000-APILUHN-CARD;8mhwavKVb91T
+;wd-unionpayinternational-authentication;c6e9331c-5c1f-4fc6-8a08-ef65ce09ddb0 ;16d85b73-79e2-4c33-932a-7da99fb04a9c;70000-APILUHN-CARD ;8mhwavKVb91T
+;wd-sofort-authentication;f19d17a2-01ae-11e2-9085-005056a96a54;ad39d9d9-2712-4abd-9016-cdeb60dc3c8f;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-masterpass-authentication;8bc8ed6d-81a8-43be-bd7b-75b008f89fa6;87e1c187-363f-41d8-abab-7bae0fb03eca;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-sepacredit-authentication;4c901196-eff7-411e-82a3-5ef6b6860d64;ecdf5990-0372-47cd-a55d-037dccfe9d25;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-ideal-authentication;b4ca14c0-bb9a-434d-8ce3-65fbff2c2267;dbc5a498-9a66-43b9-bf1d-a618dd399684;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-sepadebit-authentication;4c901196-eff7-411e-82a3-5ef6b6860d64;ecdf5990-0372-47cd-a55d-037dccfe9d25;70000-APITEST-AP;qD2wzQ_hrc!8;;DE98ZZZ09999999999;SepaCreditor;SepaStoreCity
+;wd-alipay-xborder-authentication;7ca48aa0-ab12-4560-ab4a-af1c477cce43;91cf6a8c-2a44-427e-b255-e3647350e247;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-poipia-authentication;105ab3e8-d16b-4fa0-9f1f-18dd9b390c94;2d96596b-9d10-4c98-ac47-4d56e22fd878;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-ratepayinvoice-authentication;fa02d1d4-f518-4e22-b42b-2abab5867a84;dbc5a498-9a66-43b9-bf1d-a618dd399684;70000-APITEST-AP;qD2wzQ_hrc!8;
+
+INSERT_UPDATE WirecardPaymentConfiguration;baseStore(uid)[unique=true];paymentMode(code)[unique=true];authentication(code);fallbackAuthentication(code);enabled[default=true];currencies(isocode)[default='$currencies'];shippingCountries(isocode)[default='$countries'];billingCountries(isocode)[default='$countries'];sameAddress
+;apparel-de;wd-paypal;wd-paypal-authentication;
+;apparel-de;wd-sofort;wd-sofort-authentication;wd-sepacredit-authentication;;$sofort-currencies;$sofort-countries;$sofort-countries
+;apparel-de;wd-creditcard-3dsattempt;wd-creditcard3d-authentication;wd-creditcard-authentication;
+;apparel-de;wd-creditcard-3dsonly;wd-creditcard3d-authentication;;
+;apparel-de;wd-creditcard;wd-creditcard-authentication;;
+;apparel-de;wd-alipay-xborder;wd-alipay-xborder-authentication;;;$alipay-xborder-currencies
+;apparel-de;wd-wirecard-invoice;wd-ratepayinvoice-authentication;;;$ratepayinvoice-currencies;$ratepayinvoice-countries;$ratepayinvoice-countries;true
+;apparel-de;wd-masterpass;wd-masterpass-authentication;;;EUR
+;apparel-de;wd-ideal;wd-ideal-authentication;wd-sepacredit-authentication;;EUR
+;apparel-de;wd-sepa;wd-sepadebit-authentication;wd-sepacredit-authentication;;EUR
+;apparel-de;wd-poipia;wd-poipia-authentication;wd-sepacredit-authentication;;$currencies
+;apparel-de;wd-unionpayinternational;wd-unionpayinternational-authentication;
+
+UPDATE WirecardPaymentConfiguration;baseStore(uid)[unique=true];paymentMode(code)[unique=true];totalAmountMin;totalAmountMax;totalAmountCurrency(isocode);years;restrictPromotions[default=false];restrictDigitalProducts
+;apparel-de;wd-creditcard-3dsattempt;100;300;EUR
+;apparel-de;wd-creditcard-3dsonly;300;;EUR
+;apparel-de;wd-creditcard;;100;EUR;
+;apparel-de;wd-wirecard-invoice;20;3500;EUR;18;true;true
+
+INSERT_UPDATE BaseStore; uid[unique = true]; wirecardCertificate(code);
+; apparel-de  ; api-test.wirecard.com.crt ;

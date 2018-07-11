@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2017 SAP SE or an SAP affiliate company.  All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    
+    <alias name="wirecardTakePaymentAction" alias="takePaymentAction"/>
+    
+    <bean id="wirecardTakePaymentAction" class="com.wirecard.hybris.fulfilmentprocess.actions.order.WirecardTakePaymentAction"  parent="abstractAction">
+        <property name="wirecardPOExecutionService" ref="wirecardPaymentOperationExecution"/>
+        <property name="impersonationService" ref="impersonationService"/>
+        <property name="i18NService" ref="i18NService"/>
+    </bean>
+
+
+
+    <alias name="wirecardProcessOrderCancellationAction" alias="processOrderCancellationAction"/>
+    <bean id="wirecardProcessOrderCancellationAction" class="com.wirecard.hybris.fulfilmentprocess.actions.order.cancel.WirecardProcessOrderCancellationAction"
+        parent="abstractAction">
+        <property name="orderCancelCallbackService" ref="orderCancelCallbackService"/>
+        <property name="orderCancelService" ref="orderCancelService"/>
+        <property name="wirecardPOExecutionService" ref="wirecardPaymentOperationExecution"/>
+    </bean>
+
+
+
+    <alias name="wirecardCaptureRefundAction" alias="captureRefundAction"/>
+    <bean id="wirecardCaptureRefundAction" class="com.wirecard.hybris.fulfilmentprocess.actions.refund.WirecardCaptureRefundAction"  parent="abstractAction">
+        <property name="wirecardPOExecutionService" ref="wirecardPaymentOperationExecution"/>
+    </bean>
+
+</beans>

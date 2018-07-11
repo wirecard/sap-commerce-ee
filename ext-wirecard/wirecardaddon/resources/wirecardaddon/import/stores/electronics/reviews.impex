@@ -1,0 +1,16 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2017 SAP SE or an SAP affiliate company.  All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+$catalog-Online=Online
+$product-catalog=electronicsProductCatalog
+$productCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$product-catalog]),CatalogVersion.version[default=$catalog-Online])[default=$product-catalog:$catalog-Online]
+
+$defaultPassword=password
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Online'])[unique=true,default=$productCatalog:Online]

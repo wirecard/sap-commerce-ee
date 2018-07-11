@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<payment xmlns="http://www.elastic-payments.com/schema/payment">
+    <merchant-account-id>9abf05c1-c266-46ae-8eac-7f87ca97af28</merchant-account-id>
+    <request-id>${requestId}</request-id>
+    <transaction-type>authorization</transaction-type>
+    <requested-amount currency="EUR">6.66</requested-amount>
+    <account-holder>
+        <first-name>John</first-name>
+        <last-name>Constantine</last-name>
+    </account-holder>
+    <shipping>
+        <first-name>Jack</first-name>
+        <last-name>Jones</last-name>
+        <phone>+49123123123</phone>
+        <address>
+            <street1>123 anystreet</street1>
+            <city>Brantford</city>
+            <country>CA</country>
+            <postal-code>M4P1E8</postal-code>
+        </address>
+    </shipping>
+    <order-number>4809909346</order-number>
+    <descriptor>customerStatement 18009998888</descriptor>
+    <payment-methods>
+        <payment-method name="paypal"/>
+    </payment-methods>
+    <success-redirect-url>https://www.google.de</success-redirect-url>
+    <cancel-redirect-url>https://www.google.de</cancel-redirect-url>
+</payment>

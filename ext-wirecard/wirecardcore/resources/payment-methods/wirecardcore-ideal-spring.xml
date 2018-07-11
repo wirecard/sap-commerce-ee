@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-ideal"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="DEBIT" value-ref="idealDebitPaymentOperation"/>
+                <entry key-ref="DEBIT_RETURN" value-ref="debitReturnPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="debitRefundPaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="debitCancelPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - IDEAL-->
+    <!--Ideal Debit Operation-->
+    <bean id="idealDebitPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="idealPaymentDebitConverter"/>
+        <property name="paymentProcessor" ref="idealDebitBicPaymentProcessor"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="idealDebitResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="debitUrlPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!-- IDEAL RESPONSE HANDLER-->
+
+    <!-- Ideal Authorization Response Handler-->
+    <bean id="idealDebitResponseHandler" parent="orderRecalculationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.IdealPaymentInfoModel"/>
+    </bean>
+
+    <!--Ideal AUTHORIZATION CONVERTER-->
+
+    <alias name="idealPaymentDebitConverter" alias="idealPaymentDebitConverter"/>
+    <bean id="idealPaymentDebitConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPopulator"/>
+                <ref bean="debitTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="idealDebitBicPaymentProcessor"
+          class="com.wirecard.hybris.core.operation.impl.IdealDebitBicPaymentProcessor">
+        <property name="objectFactory" ref="wirecardObjectFactory"/>
+    </bean>
+
+</beans>

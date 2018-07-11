@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-alipay-xborder"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="DEBIT" value-ref="alipayXBorderDebitPaymentOperation"/>
+                <entry key-ref="DEBIT_RETURN" value-ref="alipayXBorderDebitReturnPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="alipayXBorderRefundPaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="alipayXBorderCancelPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - ALIPAY CROSS BORDER -->
+    <!-- Alipay Payment Operation-->
+    <bean id="alipayXBorderDebitPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="debitPaymentConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="alipayXBorderDebitResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="debitUrlPaymentTransactionStrategy"/>
+        <property name="fallBack" value="false"/>
+    </bean>
+
+    <!--Alipay Debit Return Operation-->
+    <bean id="alipayXBorderDebitReturnPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentCommand" ref="noopWirecardPaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="debitPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Alipay Refund Operation-->
+    <bean id="alipayXBorderRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="alipayXBorderPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Alipay Cancel Operation-->
+    <bean id="alipayXBorderCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="alipayXBorderPaymentRefundConverter"/>
+        <property name="paymentCommand" ref="debitPaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+    </bean>
+
+    <!-- ALIPAY RESPONSE HANDLER-->
+
+    <!-- Alipay Debit Response Handler-->
+    <bean id="alipayXBorderDebitResponseHandler" parent="orderRecalculationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.AlipayXborderPaymentInfoModel"/>
+    </bean>
+
+    <!--Alipay REFUND CONVERTER-->
+
+    <alias name="alipayXBorderPaymentRefundConverter" alias="alipayXBorderPaymentRefundConverter"/>
+    <bean id="alipayXBorderPaymentRefundConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <bean class="com.wirecard.hybris.facades.populators.payment.ParentTransactionIdPopulator"
+                      parent="abstractParentTransactionIdPopulator">
+                    <property name="parentPaymentTransactionType" value="DEBIT"/>
+                    <property name="wirecardTransactionService" ref="wirecardTransactionService"/>
+                </bean>
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="paymentMethodsPopulator"/>
+                <ref bean="refundDebitTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+</beans>

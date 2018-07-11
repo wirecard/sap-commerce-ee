@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean depends-on="wirecardPaymentOperationConverterMap" parent="mapMergeDirective">
+        <property name="key" value="wd-wirecard-invoice"/>
+        <property name="value">
+            <map key-type="java.lang.String">
+                <entry key-ref="AUTHORIZATION" value-ref="ratepayInvoiceAuthorizationPaymentOperation"/>
+                <entry key-ref="NOTIFICATION" value-ref="defaultNotificationPaymentOperation"/>
+                <entry key-ref="CAPTURE" value-ref="ratepayInvoiceCapturePaymentOperation"/>
+                <entry key-ref="CANCEL" value-ref="ratepayInvoiceCancelPaymentOperation"/>
+                <entry key-ref="REFUND_FOLLOW_ON" value-ref="ratepayInvoiceRefundPaymentOperation"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- PAYMENT PROCESSORS - Ratepay Invoice -->
+    <bean id="ratepayInvoiceFingerPrintPaymentProcessor"
+          class="com.wirecard.hybris.core.operation.impl.RatepayInvoiceFingerPrintPaymentProcessor">
+        <property name="objectFactory" ref="wirecardObjectFactory"/>
+        <property name="genericEncoder" ref="md5PasswordEncoder"/>
+    </bean>
+
+    <!--PAYMENT OPERATIONS - Ratepay Invoice -->
+
+    <!--Ratepay Invoice Payment Operation-->
+    <bean id="ratepayInvoiceAuthorizationPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="ratepayInvoicePaymentAuthorizationConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationPaymentCommand"/>
+        <property name="responseHandler" ref="ratepayInvoiceAuthorizationResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="authorizationPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Ratepay Invoice Capture Operation-->
+    <bean id="ratepayInvoiceCapturePaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="ratepayInvoicePaymentCaptureConverter"/>
+        <property name="paymentCommand" ref="defaultCapturePaymentCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="capturePaymentTransactionStrategy"/>
+        <property name="paymentProcessor" ref="ratepayInvoiceFingerPrintPaymentProcessor"/>
+    </bean>
+
+    <!--Ratepay Invoice Cancel Operation-->
+    <bean id="ratepayInvoiceCancelPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="ratepayInvoiceAuthorizationCancelConverter"/>
+        <property name="paymentCommand" ref="defaultAuthorizationCancelCommand"/>
+        <property name="responseHandler" ref="defaultOrderResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="cancelPaymentTransactionStrategy"/>
+    </bean>
+
+    <!--Ratepay Invoice Refund Operation-->
+    <bean id="ratepayInvoiceRefundPaymentOperation" parent="abstractPaymentOperation">
+        <property name="paymentDataConverter" ref="ratepayInvoicePaymentRefundConverter"/>
+        <property name="paymentCommand" ref="defaultRefundPaymentCommand"/>
+        <property name="responseHandler" ref="defaultRefundResponseHandler"/>
+        <property name="transactionTypeStrategy" ref="refundPaymentTransactionStrategy"/>
+    </bean>
+
+    <!-- Ratepay Invoice RESPONSE HANDLER-->
+
+    <!-- Ratepay Invoice Authorization Response Handler-->
+    <bean id="ratepayInvoiceAuthorizationResponseHandler" parent="orderRecalculationResponseHandler">
+        <property name="paymentInfoClass" value="de.hybris.platform.core.model.order.payment.RatepayInvoicePaymentInfoModel"/>
+    </bean>
+
+    <!--Ratepay Invoice CONVERTER-->
+
+    <!--Ratepay Invoice AUTHORIZATION CONVERTER-->
+    <bean id="ratepayInvoicePaymentAuthorizationConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="ratepayInvoicePaymentMethodsPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPercentagePopulator"/>
+                <ref bean="authorizationTransactionTypePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Ratepay Invoice CAPTURE CONVERTER-->
+    <bean id="ratepayInvoicePaymentCaptureConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="omniPaymentPopulator"/>
+                <ref bean="ratepayInvoicePaymentMethodsPopulator"/>
+                <ref bean="captureAuthorizationTransactionTypePopulator"/>
+                <ref bean="authorizationParentTransactionIdPopulator"/>
+                <ref bean="personalDataPaymentPopulator"/>
+                <ref bean="wirecardPaymentOrderItemsPercentagePopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Ratepay Invoice CANCEL CONVERTER-->
+    <alias name="ratepayInvoiceAuthorizationCancelConverter" alias="ratepayInvoiceAuthorizationCancelConverter"/>
+    <bean id="ratepayInvoiceAuthorizationCancelConverter" parent="defaultAuthorizationCancelConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="ratepayInvoicePaymentMethodsPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Ratepay Invoice REFUND CONVERTER-->
+    <bean id="ratepayInvoicePaymentRefundConverter" parent="defaultPaymentRefundConverter">
+        <property name="targetClass" value="com.wirecard.hybris.core.data.types.Payment"/>
+        <property name="populators">
+            <list merge="true">
+                <ref bean="ratepayInvoicePaymentMethodsPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--Ratepay Invoice POPULATOR -->
+
+    <bean id="ratepayInvoicePaymentMethodsPopulator" class="com.wirecard.hybris.facades.populators.payment.PaymentMethodsPopulator">
+        <property name="wirecardObjectFactory" ref="wirecardObjectFactory"/>
+        <property name="paymentMethodName" value="RATEPAY_INVOICE"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- [y] hybris Platform Copyright (c) 2017 SAP SE or an SAP affiliate company. All rights reserved. This software is the 
+    confidential and proprietary information of SAP ("Confidential Information"). You shall not disclose such Confidential Information 
+    and shall use it only in accordance with the terms of the license agreement you entered into with SAP. -->
+<config xmlns="http://www.hybris.com/cockpit/config">
+
+    <!-- wirecardbackoffice UI configuration should be provided here -->
+
+    <!--<context component="component-code" module="wirecardbackoffice"> -->
+    <!--Please check documentation for code snippets for specific components -->
+    <!--</context> -->
+
+
+    <context type="WirecardPaymentConfiguration" component="base" merge-by="type">
+        <y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+            <y:labels>
+                <y:label>(baseStore.name?:'') + ' ' + (paymentMode.name?:'') + ' ' + enabled</y:label>
+            </y:labels>
+        </y:base>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="WirecardPaymentConfiguration" component="listview">
+        <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="baseStore"/>
+            <list-view:column qualifier="paymentMode"/>
+            <list-view:column qualifier="enabled"/>
+        </list-view:list-view>
+    </context>
+
+    <context type="WirecardAuthentication" component="base" merge-by="type">
+        <y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+            <y:labels>
+                <y:label>(code?:'') + ' [' + maid + ']'</y:label>
+            </y:labels>
+        </y:base>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="WirecardAuthentication" component="listview">
+        <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="code"/>
+            <list-view:column qualifier="maid"/>
+        </list-view:list-view>
+    </context>
+
+    <context merge-by="module" parent="auto" component="explorer-tree">
+        <explorer-tree:explorer-tree xmlns:explorer-tree="http://www.hybris.com/cockpitng/config/explorertree">
+            <explorer-tree:navigation-node id="wirecard.navigation.node.wirecard.entry">
+                <explorer-tree:type-node code="StandardPaymentMode" id="StandardPaymentMode"/>
+                <explorer-tree:type-node code="WirecardPaymentConfiguration" id="WirecardPaymentConfiguration"/>
+                <explorer-tree:type-node code="WirecardAuthentication" id="WirecardAuthentication"/>
+            </explorer-tree:navigation-node>
+        </explorer-tree:explorer-tree>
+    </context>
+
+    <context merge-by="type" type="WirecardPaymentConfiguration" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+
+            <editorArea:essentials>
+                <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="baseStore"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="paymentMode"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="enabled"/>
+                </editorArea:essentialSection>
+            </editorArea:essentials>
+
+            <editorArea:tab name="wirecard.payment.authentication.tab">
+                <editorArea:section name="wirecard.payment.authentication.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="authentication"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="fallbackAuthentication"/>
+                </editorArea:section>
+            </editorArea:tab>
+
+            <editorArea:tab name="wirecard.payment.filter.tab">
+                <editorArea:section name="wirecard.payment.order.total.amount.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="totalAmountMin"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="totalAmountMax"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="totalAmountCurrency"/>
+                </editorArea:section>
+                <editorArea:section name="wirecard.payment.allowed.currencies.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="currencies"/>
+                </editorArea:section>
+                <editorArea:section name="wirecard.payment.allowed.countries.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="billingCountries"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingCountries"/>
+                </editorArea:section>
+                <editorArea:section name="wirecard.payment.allowed.age.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="years"/>
+                </editorArea:section>
+                <editorArea:section name="wirecard.payment.allowed.digital.products.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="restrictDigitalProducts"/>
+                </editorArea:section>
+                <editorArea:section name="wirecard.payment.allowed.promotions.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="restrictPromotions"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="type" type="WirecardAuthentication" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:essentials>
+                <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="code"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="maid"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="username"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="password"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="secret"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="baseUrl"/>
+                </editorArea:essentialSection>
+            </editorArea:essentials>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="BaseStore" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="wirecard.base.store.wirecard.tab">
+                <editorArea:section name="wirecard.base.store.wirecard.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="paymentConfigurations"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="wirecardCertificate"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="PaymentTransaction" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="wirecard.payment.transaction.general.tab">
+                <editorArea:section name="wirecard.payment.transaction.general.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="code"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="order"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="paymentProvider"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="pares"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="cardholderAuthenticationStatus"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea"
+                                          qualifier="cardholderAuthenticationValue"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="eci"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="xid"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="entries"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context merge-by="type" parent="GenericItem" type="PaymentTransactionEntry" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:essentials>
+                <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="code"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="subscriptionId"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="transactionStatus"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="type"/>
+                </editorArea:essentialSection>
+            </editorArea:essentials>
+
+            <editorArea:tab name="wirecard.payment.transaction.entry.general.tab">
+                <editorArea:section name="wirecard.payment.transaction.entry.general.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="requestId"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="xmlFiles"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="currency"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="amount"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+
+    <context merge-by="type" parent="GenericItem" type="PaymentMode" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="wirecard.payment.mode.wirecard.tab">
+                <editorArea:section name="wirecard.payment.mode.wirecard.section">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="paymentAlias"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="transactionType"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="media"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="paymentConfigurations"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="showOptionalFormField"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+</config>

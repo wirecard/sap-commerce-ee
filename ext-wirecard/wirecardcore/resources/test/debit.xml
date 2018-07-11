@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<payment xmlns="http://www.elastic-payments.com/schema/payment">
+    <merchant-account-id>9abf05c1-c266-46ae-8eac-7f87ca97af28</merchant-account-id>
+    <request-id>${requestId}</request-id>
+    <transaction-type>debit</transaction-type>
+    <payment-methods>
+        <payment-method name="paypal"/>
+    </payment-methods>
+    <requested-amount currency="EUR">1.00</requested-amount>
+    <notifications>
+        <notification url="https://www.merchant.com/ipn"/>
+    </notifications>
+    <cancel-redirect-url>http://www.merchant.com/order/error</cancel-redirect-url>
+    <fail-redirect-url>http://www.merchant.com/order/error</fail-redirect-url>
+    <success-redirect-url>http://www.merchant.com/order/success</success-redirect-url>
+    <account-holder>
+        <email>paypal.buyer2@wirecard.com</email>
+    </account-holder>
+</payment>
