@@ -45,6 +45,12 @@ public class AddressPopulator implements Populator<AddressModel, Address> {
         target.setPostalCode(source.getPostalcode());
         target.setCountry(source.getCountry().getIsocode());
 
-
+        if (source.getRegion() != null) {
+            if (source.getRegion().getIsocode().split("-").length > 1 ) {
+                target.setState(source.getRegion().getIsocode().split("-")[1]);
+            } else {
+                target.setState(source.getRegion().getIsocode());
+            }
+        }
     }
 }

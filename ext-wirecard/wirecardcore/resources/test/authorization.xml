@@ -13,10 +13,12 @@
         <last-name>Jones</last-name>
         <phone>+49123123123</phone>
         <address>
-            <street1>123 anystreet</street1>
-            <city>Brantford</city>
-            <country>CA</country>
-            <postal-code>M4P1E8</postal-code>
+            <street1>Address</street1>
+            <street2></street2>
+            <city>City</city>
+            <state>IL</state>
+            <country>US</country>
+            <postal-code>10101</postal-code>
         </address>
     </shipping>
     <order-number>4809909346</order-number>
