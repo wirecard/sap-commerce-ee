@@ -116,10 +116,11 @@ public class PayPalAuthorizationPaymentRequestConverterTest extends HybrisJUnit4
         shipping.setLastName("Jones");
         shipping.setPhone("+49123123123");
         com.wirecard.hybris.core.data.types.Address address = new com.wirecard.hybris.core.data.types.Address();
-        address.setStreet1("123 anystree");
-        address.setCity("Brantford");
-        address.setCountry("CA");
-        address.setPostalCode("M4P1E8");
+        address.setStreet1("123 anystreet");
+        address.setCity("Chicago");
+        address.setCountry("US");
+        address.setState("IL");
+        address.setPostalCode("10101");
         shipping.setAddress(address);
         payment.setShipping(shipping);
         payment.setOrderNumber("48090");
