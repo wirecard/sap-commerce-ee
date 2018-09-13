@@ -13,9 +13,8 @@
         <last-name>Jones</last-name>
         <phone>+49123123123</phone>
         <address>
-            <street1>Address</street1>
-            <street2></street2>
-            <city>City</city>
+            <street1>123 anystree</street1>
+            <city>Chicago</city>
             <state>IL</state>
             <country>US</country>
             <postal-code>10101</postal-code>
