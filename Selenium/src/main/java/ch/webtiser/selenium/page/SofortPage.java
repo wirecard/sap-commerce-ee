@@ -1,7 +1,6 @@
 package ch.webtiser.selenium.page;
 
 import ch.webtiser.selenium.model.Customer;
-import ch.webtiser.selenium.model.payment.AlipayMethod;
 import ch.webtiser.selenium.model.payment.SofortMethod;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;

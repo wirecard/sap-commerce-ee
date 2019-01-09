@@ -2,27 +2,18 @@ package ch.webtiser.selenium.page;
 
 import ch.webtiser.selenium.model.Customer;
 import ch.webtiser.selenium.model.payment.PayPalMethod;
-import ch.webtiser.selenium.page.step.PaymentStep;
-import ch.webtiser.selenium.page.step.ReviewStep;
-import ch.webtiser.selenium.page.step.ShipingMethodeStep;
-import ch.webtiser.selenium.page.step.ShipmentStep;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 
 public class PaypalPage extends AbstractPage {

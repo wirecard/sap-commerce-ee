@@ -5,12 +5,11 @@ import ch.webtiser.selenium.model.payment.PaymentType;
 import ch.webtiser.selenium.util.PropertyHelper;
 
 public enum Customer {
-	TESTUSER("test-customer@selenium.corp", "12341234", "Selen", "Ium"),
-	BERNARD_CUSTOMER(PropertyHelper.loadProperties().getProperty("testuser.name"), PropertyHelper.loadProperties().getProperty("testuser.password"), "Bernard", "Customer");
-	//any additional users and properties have to be imported as sample data.
-	//see selenium-data.impex in the 'wtinitialdata' extension.
+	TEST_USER(PropertyHelper.loadProperties().getProperty("testuser.name"),
+			PropertyHelper.loadProperties().getProperty("testuser.password"),
+			"Bernard", "Customer");
 
-	public static final Customer DEFAULT = BERNARD_CUSTOMER;
+	public static final Customer DEFAULT = TEST_USER;
 
 	private String userName;
 	private String password;

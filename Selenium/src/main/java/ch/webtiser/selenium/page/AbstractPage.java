@@ -1,6 +1,5 @@
 package ch.webtiser.selenium.page;
 
-import ch.webtiser.selenium.model.Language;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;

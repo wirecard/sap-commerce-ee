@@ -1,16 +1,26 @@
 package ch.webtiser.selenium.test;
 
 import ch.webtiser.selenium.model.Customer;
+import ch.webtiser.selenium.model.DeliveryAddress;
 import ch.webtiser.selenium.model.Product;
 import ch.webtiser.selenium.model.payment.*;
 import ch.webtiser.selenium.page.*;
+import ch.webtiser.selenium.util.DriverHelper;
+import ch.webtiser.selenium.util.LoginHelper;
+import ch.webtiser.selenium.util.PropertyHelper;
+import ch.webtiser.selenium.util.enums.Environment;
+import ch.webtiser.selenium.util.enums.OperatingSystem;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.sql.Driver;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -27,6 +37,12 @@ public class CheckoutTest extends AbstractTestBase {
 		pdp.waitForLoad();
 	}
 
+	private static void removeAllShipmentAddress(final WebDriver driver, final Environment env) {
+	    final AdressBookPage adressBookPage = AdressBookPage.goTo(driver, env);
+	    adressBookPage.removeAllAdresses();
+        adressBookPage.waitForLoad();
+    }
+
 	@Override
 	@Before
 	public void setUp() {
@@ -36,12 +52,15 @@ public class CheckoutTest extends AbstractTestBase {
 
 
 	@Test
-	public void creditCardCheckoutTest() {
-		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT);
+	public void creditCard3DCheckoutTest() {
+		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT_3D);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+		if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
+
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -51,19 +70,48 @@ public class CheckoutTest extends AbstractTestBase {
 		chp.nextStep();
 		chp.waitForLoad();
 
+		final CreditCard3DPage creditCard3DPage = new CreditCard3DPage(driver, env, TEST_CUSTOMER);
+        creditCard3DPage.inputPasswordAndConfirm();
+
 		chp.fillTerms();
 		chp.placeOrder();
 		chp.waitForLoad();
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 	}
 
+    @Test
+    public void creditCard3DFallbackCheckoutTest() {
+        TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT);
+        final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
+        chp.fillDeliveryAddress();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
+
+        chp.fillDeliveryMethod();
+        chp.nextStep();
+        chp.waitForLoad();
+
+        chp.fillPayment();
+        chp.nextStep();
+        chp.waitForLoad();
+
+        chp.fillTerms();
+        chp.placeOrder();
+        chp.waitForLoad();
+        assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
+    }
+
 	@Test
 	public void paypalCheckoutTest() {
 		TEST_CUSTOMER.setPayment(PayPalMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -90,8 +138,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(MasterpassMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -110,8 +160,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(AlipayMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -135,8 +187,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(SofortMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -162,8 +216,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(IdealMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -189,8 +245,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(SepaMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -212,8 +270,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(UnionPayMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();
@@ -234,8 +294,10 @@ public class CheckoutTest extends AbstractTestBase {
 		TEST_CUSTOMER.setPayment(PoiPaiMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.fillDeliveryAddress();
-		chp.nextStep();
-		chp.waitForLoad();
+        if(driver.getCurrentUrl().contains("delivery-address")) {
+            chp.nextStep();
+            chp.waitForLoad();
+        }
 
 		chp.fillDeliveryMethod();
 		chp.nextStep();

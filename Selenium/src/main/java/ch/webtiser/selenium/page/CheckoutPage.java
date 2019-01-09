@@ -4,6 +4,7 @@ import ch.webtiser.selenium.model.Customer;
 import ch.webtiser.selenium.page.step.*;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -14,13 +15,11 @@ import org.slf4j.LoggerFactory;
 public class CheckoutPage extends AbstractPage {
 	private static final Logger LOG = LoggerFactory.getLogger(CheckoutPage.class);
 	private static final String DEFAULT_URL = "checkout";
-	private static final String DELIVERY_URL = "checkout/multi/delivery-address/add";
-	private static final String DELIVERY_METHOD_URL = "checkout/multi/delivery-method/choose";
-	private static final String SUCCESS_CONFIRMATION_MESSAGE = "VIELEN DANK F\u00dcR IHRE BESTELLUNG!";
 
 
 	private static final By ELEMENT_SEPATERMS = By.id("sepaMandateChkConditions");
 	private static final By ELEMENT_CONFIRMBUTTON = By.id("sepaMandateButton");
+    private static final By ELEMENT_ERRORMESSAGE = By.cssSelector("global-alerts.alert");
 
 
 	private ShipmentStep shipmentStep;
@@ -43,12 +42,9 @@ public class CheckoutPage extends AbstractPage {
 		reviewStep = new ReviewStep(driver, env);
 	}
 
-	public void fillPaymentType() {
-		paymentStep.setPaymentType(customer.getPaymentType());
-	}
-
 	public void fillDeliveryAddress() {
-		shipmentStep.fill(customer.getDeliveryAddress());
+       shipmentStep.fill(customer.getDeliveryAddress());
+        waitForLoad();
 	}
 
 	public void fillDeliveryMethod() {
@@ -68,6 +64,14 @@ public class CheckoutPage extends AbstractPage {
 		driver.findElement(ELEMENT_CONFIRMBUTTON).click();
 	}
 
+	public String getErrorMessage() {
+	    final String errorText = getErrorMessageElement().getText();
+	    return errorText.contains("<button>") ? errorText.substring(errorText.indexOf("</button>") + "</button>".length()) : errorText;
+    }
+
+    public WebElement getErrorMessageElement() {
+	    return driver.findElement(ELEMENT_ERRORMESSAGE);
+    }
 
 	public void nextStep() {
 		driver.findElement(By.className("checkout-next")).click();
@@ -75,13 +79,5 @@ public class CheckoutPage extends AbstractPage {
 
 	public void placeOrder() {
 		reviewStep.placeOrder();
-	}
-
-	public WebElement successConfirmationMessage() {
-		return driver.findElement(By.className("checkout-success__body__headline"));
-	}
-
-	public WebElement successProductName() {
-		return driver.findElement(By.className("item__name"));
 	}
 }

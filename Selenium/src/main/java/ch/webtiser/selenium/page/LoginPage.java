@@ -1,16 +1,10 @@
 package ch.webtiser.selenium.page;
 
 import ch.webtiser.selenium.model.Customer;
-import ch.webtiser.selenium.model.Language;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LoginPage extends AbstractPage {
 	public LoginPage(final WebDriver driver, final Environment env) {

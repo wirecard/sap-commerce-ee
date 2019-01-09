@@ -3,11 +3,9 @@ package ch.webtiser.selenium.model;
 import ch.webtiser.selenium.util.PropertyHelper;
 
 public enum Product {
-	DSC_T90(PropertyHelper.loadProperties().getProperty("testproduct.id"), PropertyHelper.loadProperties().getProperty("testproduct.name"), PropertyHelper.loadProperties().getProperty("testproduct.price"), Currency.DEFAULT);
-	//All test-products including all used properties that are used here
-	//have to be imported with the sample data. See the 'wtinitialdata' extension.
+	TEST_PRODUCT(PropertyHelper.loadProperties().getProperty("testproduct.id"), PropertyHelper.loadProperties().getProperty("testproduct.name"), PropertyHelper.loadProperties().getProperty("testproduct.price"), Currency.DEFAULT);
 
-	public static final Product DEFAULT = DSC_T90;
+	public static final Product DEFAULT = TEST_PRODUCT;
 
 	private final String id;
 	private final String name;

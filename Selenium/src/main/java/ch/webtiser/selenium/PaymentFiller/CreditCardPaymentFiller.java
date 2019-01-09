@@ -26,11 +26,11 @@ public class CreditCardPaymentFiller extends AbstractPaymentFiller<CreditCardMet
         switchToFrame(payment);
         getAccountNumberInput().sendKeys(payment.getAccountNumber());
         getExpirationDateMonthSelect().selectByValue(payment.getExpirationDateMont());
-        getExpirationDateYearSelect().selectByValue("20"+payment.getExpirationDateYear());
+        getExpirationDateYearSelect().selectByValue(payment.getExpirationDateYear());
         getCardHolderInput().sendKeys(payment.getCardHolder());
         getSecurityCodeInput().sendKeys(payment.getSecurityCode());
-        driver.findElement(By.id("select2-chosen-1")).click();
-        getProvider(payment.getCardProvider().getCode()).click();
+        //driver.findElement(By.id("select2-chosen-1")).click();
+        //getProvider(payment.getCardProvider().getCode()).click();
         driver.switchTo().defaultContent();
     }
 

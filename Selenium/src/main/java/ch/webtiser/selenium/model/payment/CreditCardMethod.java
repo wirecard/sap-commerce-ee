@@ -1,48 +1,54 @@
 package ch.webtiser.selenium.model.payment;
 
-import ch.webtiser.selenium.model.CardType;
 import ch.webtiser.selenium.util.PropertyHelper;
 
 public class CreditCardMethod extends Payment {
 
     public static final Payment DEFAULT = new CreditCardMethod(
-            CardType.valueOf(PropertyHelper.loadProperties().getProperty("creditcard.default.provider")),
             PropertyHelper.loadProperties().getProperty("creditcard.default.account"),
             PropertyHelper.loadProperties().getProperty("creditcard.default.expirationDate.month"),
             PropertyHelper.loadProperties().getProperty("creditcard.default.expirationDate.year"),
             PropertyHelper.loadProperties().getProperty("creditcard.default.cardHolder"),
-            PropertyHelper.loadProperties().getProperty("creditcard.default.securityCode")
+            PropertyHelper.loadProperties().getProperty("creditcard.default.securityCode"),
+           false,
+            ""
     );
 
-    private CardType cardProvider;
+    public static final Payment DEFAULT_3D = new CreditCardMethod(
+            PropertyHelper.loadProperties().getProperty("creditcard.default3D.account"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default3D.expirationDate.month"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default3D.expirationDate.year"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default3D.cardHolder"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default3D.securityCode"),
+            true,
+            PropertyHelper.loadProperties().getProperty("creditcard.default3D.password3D")
+
+    );
+
     private String accountNumber;
     private String expirationDateMont;
     private String expirationDateYear;
     private String cardHolder;
     private String securityCode;
+    private Boolean is3DSecured;
+
+    private String password3D;
 
     public CreditCardMethod() {
         super(PaymentType.CREDITCARD, false);
     }
 
-    public CreditCardMethod(CardType cardProvider, String accountNumber, String expirationDateMont, String expirationDateYear, String cardHolder, String securityCode) {
-        super(PaymentType.CREDITCARD, false);
-        this.cardProvider = cardProvider;
+    public CreditCardMethod(String accountNumber, String expirationDateMont, String expirationDateYear, String cardHolder, String securityCode, Boolean is3DSecured, String password3D) {
+        super(PaymentType.CREDITCARD, is3DSecured);
         this.accountNumber = accountNumber;
         this.expirationDateMont = expirationDateMont;
         this.expirationDateYear = expirationDateYear;
         this.cardHolder = cardHolder;
         this.securityCode = securityCode;
+        this.is3DSecured = is3DSecured;
+        this.password3D = password3D;
     }
-
-    public CardType getCardProvider() {
-        return cardProvider;
-    }
-
-    public void setCardProvider(CardType cardProvider) {
-        this.cardProvider = cardProvider;
-    }
-
+    
     public String getAccountNumber() {
         return accountNumber;
     }
@@ -83,4 +89,19 @@ public class CreditCardMethod extends Payment {
         this.securityCode = securityCode;
     }
 
+    public Boolean getIs3DSecured() {
+        return is3DSecured;
+    }
+
+    public void setIs3DSecured(Boolean is3DSecured) {
+        this.is3DSecured = is3DSecured;
+    }
+
+    public String getPassword3D() {
+        return password3D;
+    }
+
+    public void setPassword3D(String password3D) {
+        this.password3D = password3D;
+    }
 }

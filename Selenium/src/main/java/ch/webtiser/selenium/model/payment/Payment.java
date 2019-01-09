@@ -1,8 +1,5 @@
 package ch.webtiser.selenium.model.payment;
 
-import ch.webtiser.selenium.model.CardType;
-import ch.webtiser.selenium.util.PropertyHelper;
-
 public class Payment {
     private PaymentType paymentType = null;
     private boolean hasAuthentificatio;

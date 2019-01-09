@@ -1,6 +1,5 @@
 package ch.webtiser.selenium.model.payment;
 
-import ch.webtiser.selenium.model.Country;
 import ch.webtiser.selenium.util.PropertyHelper;
 
 public class IdealMethod extends Payment {

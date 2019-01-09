@@ -5,12 +5,17 @@ It will run with Chrome as a default option.
 1. Download chromdriver for your system:
 	`https://chromedriver.storage.googleapis.com/index.html`
     Beware correct version: http://chromedriver.chromium.org/downloads
-2. Place at the location specified in the `config/exec.properties` file for your system or adapt the corresponding property. 
+2. Place at the location specified in the `src/main/resources/selenium.properties` file. 
+3. Change the properties of the default Customer in `src/main/resources/selenium.properties`.
+4. Change the properties of the default Product in `src/main/resources/selenium.properties`.
+5. If you don't want to use USD or JPY as currency, 
+change the default currency of the electronics store and add a price to the default product in backoffice for that currency. 
+5. Make sure all Payments are active and available for the Country, Currency and Customer you are using. 
+Not only in backoffice but also if the payment provider like Paypal does support it.
 
 ## Configuration
-Configuration of the target environments can be found in the `config/target.properties` file. Environments are defined by a entry `url` and a `marker` defining the environment.
-The target system can be selected by setting the system property `SELENIUM_TARGET_ENV` it defaults to `local`.
+Configuration and test data like credentials can be changed in `src/main/resources/selenium.properties`
 
-Configuration of the local execution environment is stored in `config/exec.properties`. The include the path to the driver executable and the reference to the log path.
-The target system can be selected by setting the system property `SELENIUM_EXEC_ENV` it defaults to `windows`.
-
+## Information
+Sometimes test can fail because it takes to long to load a side. 
+If that happens either change the Timout property in the config or rerun and pray.

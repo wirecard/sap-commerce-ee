@@ -2,7 +2,9 @@ package ch.webtiser.selenium.page;
 
 import ch.webtiser.selenium.model.Product;
 import ch.webtiser.selenium.util.enums.Environment;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
