@@ -9,6 +9,8 @@ import java.util.List;
 
 public class ShipmentStep extends AbstractStep<DeliveryAddress> {
 
+    private static final String DEFAULT_URL = "checkout/multi/delivery-address/add";
+
     private static final By ELEMENT_COUNTRY = By.id("address.country");
     private static final By ELEMENT_TITLE = By.id("address.title");
     private static final By ELEMENT_FIRST_NAME = By.id("address.firstName");
@@ -66,6 +68,11 @@ public class ShipmentStep extends AbstractStep<DeliveryAddress> {
 
     public void closeAdressBoock() {
         driver.findElement(By.id("cboxClose")).click();
+    }
+
+    @Override
+    public void goTo() {
+        driver.get(env.url() + DEFAULT_URL);
     }
 
     public void chooseAddressFromBook(final WebElement adress) {

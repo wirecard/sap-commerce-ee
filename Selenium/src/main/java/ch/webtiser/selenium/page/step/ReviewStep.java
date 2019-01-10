@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 
 public class ReviewStep extends AbstractStep<Boolean> {
 
+    private static final String DEFAULT_URL = "checkout/multi/wirecard/summary/view";
+
     private static final By ELEMENT_TERMS = By.id("Terms1");
     private static final By ELEMENT_PLACE_ORDER = By.id("placeOrder");
 
@@ -30,6 +32,11 @@ public class ReviewStep extends AbstractStep<Boolean> {
         if(terms.isSelected() != object) {
             getTermsCheckbox().click();
         }
+    }
+
+    @Override
+    public void goTo() {
+        driver.get(env.url() + DEFAULT_URL);
     }
 
     public void placeOrder() {

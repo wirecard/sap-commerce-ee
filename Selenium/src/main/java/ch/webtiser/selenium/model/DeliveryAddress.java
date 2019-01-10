@@ -1,9 +1,25 @@
 package ch.webtiser.selenium.model;
 
-public enum DeliveryAddress {
-	HOME(Title.MR, "Mark", "Rivers", Country.CH, "9999", "Examplestreet 99", "Example City", "041 811 12 12");
+import ch.webtiser.selenium.util.PropertyHelper;
 
-	public static final DeliveryAddress DEFAULT = HOME;
+public enum DeliveryAddress {
+	DEFAULT(Title.valueOf(PropertyHelper.getProperty("address.default.title")),
+			PropertyHelper.getProperty("address.default.firstName"),
+			PropertyHelper.getProperty("address.default.lastName"),
+			Country.valueOf(PropertyHelper.getProperty("address.default.Country")),
+			PropertyHelper.getProperty("address.default.postcode"),
+			PropertyHelper.getProperty("address.default.address"),
+			PropertyHelper.getProperty("address.default.city"),
+			PropertyHelper.getProperty("address.default.phone")),
+
+	SECOND_ADDRESS(Title.valueOf(PropertyHelper.getProperty("address.secondAddress.title")),
+			PropertyHelper.getProperty("address.secondAddress.firstName"),
+			PropertyHelper.getProperty("address.secondAddress.lastName"),
+			Country.valueOf(PropertyHelper.getProperty("address.secondAddress.Country")),
+			PropertyHelper.getProperty("address.secondAddress.postcode"),
+			PropertyHelper.getProperty("address.secondAddress.address"),
+			PropertyHelper.getProperty("address.secondAddress.city"),
+			PropertyHelper.getProperty("address.secondAddress.phone"));
 
 	private final Title title;
 	private final String firstName;

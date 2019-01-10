@@ -14,6 +14,16 @@ public class CreditCardMethod extends Payment {
             ""
     );
 
+    public static final Payment DEFAULT_AE = new CreditCardMethod(
+            PropertyHelper.loadProperties().getProperty("creditcard.default.ae.account"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default.ae.expirationDate.month"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default.ae.expirationDate.year"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default.ae.cardHolder"),
+            PropertyHelper.loadProperties().getProperty("creditcard.default.ae.securityCode"),
+            false,
+            ""
+    );
+
     public static final Payment DEFAULT_3D = new CreditCardMethod(
             PropertyHelper.loadProperties().getProperty("creditcard.default3D.account"),
             PropertyHelper.loadProperties().getProperty("creditcard.default3D.expirationDate.month"),

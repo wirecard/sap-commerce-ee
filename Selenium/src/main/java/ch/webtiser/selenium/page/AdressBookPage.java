@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AdressBookPage extends AbstractPage {
 	private static final Logger LOG = LoggerFactory.getLogger(AdressBookPage.class);
@@ -16,7 +17,7 @@ public class AdressBookPage extends AbstractPage {
 	private final String URL ="my-account/address-book";
 
 	private final By ELEMENT_REMOVE_ADRESS_ICON = By.className("removeAddressFromBookButton");
-	private final By ELEMENT_REMOVE_ADRESS_BUTTON = By.xpath("//div[@class=''account-address-removal-popup]/a[contains(@href, 'remove')]");
+	private final By ELEMENT_REMOVE_ADRESS_BUTTON = By.xpath("//div[@id='cboxLoadedContent']//div[@class='account-address-removal-popup']//a[contains(@href, 'remove')]");
 
 	public AdressBookPage(final WebDriver driver, final Environment env) {
 		super(driver, env);
@@ -42,7 +43,10 @@ public class AdressBookPage extends AbstractPage {
 
 
 	public List<WebElement> getRemoveIcons() {
-		return driver.findElements(ELEMENT_REMOVE_ADRESS_ICON);
+	    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+	    final List<WebElement> icons = driver.findElements(ELEMENT_REMOVE_ADRESS_ICON);
+        driver.manage().timeouts().implicitlyWait(env.timeoutSeconds(), TimeUnit.SECONDS);
+		return icons;
 	}
 
 	public WebElement getRemoveButton() {

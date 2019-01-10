@@ -24,4 +24,7 @@ public class PropertyHelper {
 		}
 		return props;
 	}
+	public static String getProperty(final String key) {
+		return loadProperties().getProperty(key);
+	}
 }

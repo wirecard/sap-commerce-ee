@@ -20,6 +20,8 @@ public class CheckoutPage extends AbstractPage {
 	private static final By ELEMENT_SEPATERMS = By.id("sepaMandateChkConditions");
 	private static final By ELEMENT_CONFIRMBUTTON = By.id("sepaMandateButton");
     private static final By ELEMENT_ERRORMESSAGE = By.cssSelector("global-alerts.alert");
+	private static final By ELEMENT_SAVE_PAYMENT= By.id("savePaymentMethod");
+
 
 
 	private ShipmentStep shipmentStep;
@@ -42,10 +44,52 @@ public class CheckoutPage extends AbstractPage {
 		reviewStep = new ReviewStep(driver, env);
 	}
 
+	public static CheckoutPage goTo(final WebDriver driver, final Environment env, final Customer customer) {
+		final CheckoutPage page = new CheckoutPage(driver, env, customer);
+		LOG.debug("Loaded {}.", page);
+		return page;
+	}
+
+
 	public void fillDeliveryAddress() {
        shipmentStep.fill(customer.getDeliveryAddress());
         waitForLoad();
 	}
+
+	public void completeDeliveryAddressStep() {
+		fillDeliveryAddress();
+		nextStep();
+		waitForLoad();
+	}
+
+	public void completeDeliveryMethodeStep() {
+		fillDeliveryMethod();
+		nextStep();
+		waitForLoad();
+	}
+	public void completePaymentStep(final boolean savePayment) {
+		fillPayment();
+		if(savePayment) {
+			savePayment();
+		}
+		nextStep();
+		waitForLoad();
+	}
+
+	public void completeSummaryStep() {
+		fillTerms();
+		placeOrder();
+		waitForLoad();
+	}
+
+	public void completeCheckoutWithoutAuthStep(final boolean savePayment) {
+        completeDeliveryAddressStep();
+        completeDeliveryMethodeStep();
+        completePaymentStep(savePayment);
+        completeSummaryStep() ;
+
+    }
+
 
 	public void fillDeliveryMethod() {
 		shipingMethodeStep.fill(customer.getDeliveryMethod());
@@ -69,10 +113,6 @@ public class CheckoutPage extends AbstractPage {
 	    return errorText.contains("<button>") ? errorText.substring(errorText.indexOf("</button>") + "</button>".length()) : errorText;
     }
 
-    public WebElement getErrorMessageElement() {
-	    return driver.findElement(ELEMENT_ERRORMESSAGE);
-    }
-
 	public void nextStep() {
 		driver.findElement(By.className("checkout-next")).click();
 	}
@@ -80,4 +120,32 @@ public class CheckoutPage extends AbstractPage {
 	public void placeOrder() {
 		reviewStep.placeOrder();
 	}
+
+	public void savePayment() {
+		getSavePaymentCheckbox().click();
+	}
+
+	public WebElement getSavePaymentCheckbox() {
+		return driver.findElement(ELEMENT_SAVE_PAYMENT);
+	}
+
+	public WebElement getErrorMessageElement() {
+		return driver.findElement(ELEMENT_ERRORMESSAGE);
+	}
+
+    public ShipmentStep getShipmentStep() {
+        return shipmentStep;
+    }
+
+    public ShipingMethodeStep getShipingMethodeStep() {
+        return shipingMethodeStep;
+    }
+
+    public PaymentStep getPaymentStep() {
+        return paymentStep;
+    }
+
+    public ReviewStep getReviewStep() {
+        return reviewStep;
+    }
 }

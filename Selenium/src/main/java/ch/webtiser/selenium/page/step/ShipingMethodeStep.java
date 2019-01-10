@@ -8,6 +8,8 @@ import org.openqa.selenium.support.ui.Select;
 
 public class ShipingMethodeStep extends AbstractStep<DeliveryMethod> {
 
+    private static final String DEFAULT_URL = "checkout/multi/delivery-method/choose";
+
     private static final By ELEMENT_DELIVERY_METHOD = By.id("delivery_method");
 
     public ShipingMethodeStep(WebDriver driver, Environment env) {
@@ -27,6 +29,11 @@ public class ShipingMethodeStep extends AbstractStep<DeliveryMethod> {
     @Override
     public void fill(DeliveryMethod object) {
         getDeliveryMethodSelect().selectByValue(object.toString());
+    }
+
+    @Override
+    public void goTo() {
+        driver.get(env.url() + DEFAULT_URL);
     }
 
     private Select getDeliveryMethodSelect() {
