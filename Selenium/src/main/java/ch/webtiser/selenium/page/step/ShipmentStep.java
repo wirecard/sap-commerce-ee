@@ -2,10 +2,13 @@ package ch.webtiser.selenium.page.step;
 
 import ch.webtiser.selenium.model.DeliveryAddress;
 import ch.webtiser.selenium.util.enums.Environment;
+import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ShipmentStep extends AbstractStep<DeliveryAddress> {
 
@@ -45,28 +48,49 @@ public class ShipmentStep extends AbstractStep<DeliveryAddress> {
     public boolean selectFirstAddressFromAddressBook() {
         final boolean addressBookExist = driver.findElements(ELEMENT_ADDRESSBOOK).size() != 0;
         if(addressBookExist) {
-            openAdressBoock();
+            openAddressBook();
             final List<WebElement> adresses = getAddressesInBook();
             chooseAddressFromBook(adresses.get(0));
         }
         return addressBookExist;
     }
 
-    private void addBirthdayField() {
-        ((JavascriptExecutor)driver).executeScript(
-                "var input = document.createElement('input');" +
-                    "input.setAttribute('name','" + BIRTHDAY_NAME + "');" +
-                    "input.setAttribute('id','" + FORM_PREFIX + BIRTHDAY_NAME + "');" +
-                    "document.getElementById('addressForm').appendChild(input);"
-        );
+    public void selectAddressFromAddressBook(final DeliveryAddress toSelect) {
+        openAddressBook();
+        for(int i = 1;;i++) {
+            WebElement address = driver.findElement(By.cssSelector(".addressEntry:nth-child(" + i + ")"));
+            new WebDriverWait(driver, 1).until(wd -> !address.findElement(By.tagName("li")).getText().isEmpty());
+            final String addressInfo = address.findElement(By.tagName("li")).getText();
+            if(compareAddressWithBockEntry(toSelect, addressInfo.split("\n"))) {
+                address.findElement(By.xpath(".//button[@type='submit']")).click();
+                break;
+            }
+        }
     }
 
-    public void openAdressBoock() {
+    private boolean compareAddressWithBockEntry(final DeliveryAddress address, final String[] entry) {
+        final String firstLine = removeWhitespaces(address.getFirstName() + address.getLastName());
+        final String[] cleanedEntry = new String[entry.length];
+        for(int i = 0; i < cleanedEntry.length; i++) {
+            cleanedEntry[i] = removeWhitespaces(entry[i]);
+        }
+        return cleanedEntry[0].contains(firstLine)
+                && removeWhitespaces(address.getAddress()).equals(cleanedEntry[1])
+                && removeWhitespaces(address.getCity()).equals(cleanedEntry[2])
+                && cleanedEntry[3].contains(address.getPostcode());
+    }
+
+    private String removeWhitespaces(final String toClean) {
+        return toClean.replace(" ", "").toLowerCase();
+    }
+
+
+    public void openAddressBook() {
         driver.findElement(ELEMENT_ADDRESSBOOK).click();
     }
 
 
-    public void closeAdressBoock() {
+    public void closeAdressBook() {
         driver.findElement(By.id("cboxClose")).click();
     }
 
@@ -126,6 +150,10 @@ public class ShipmentStep extends AbstractStep<DeliveryAddress> {
 
     private WebElement getSaveshippingCheckbox() {
         return getElementById(ELEMENT_SAVE_SHIPPING);
+    }
+
+    private WebElement getSavedAddresse() {
+        return driver.findElement(By.className("addressEntry"));
     }
 
     @Override
