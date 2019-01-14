@@ -109,47 +109,47 @@ public class ShipmentStep extends AbstractStep<DeliveryAddress> {
     }
 
     private Select getCountrySelect() {
-        return new Select(getElementById(ELEMENT_COUNTRY));
+        return new Select(find(ELEMENT_COUNTRY));
     }
 
     private Select getTitleSelect() {
-        return new Select(getElementById(ELEMENT_TITLE));
+        return new Select(find(ELEMENT_TITLE));
     }
 
     private WebElement getFirstNameInput() {
-        return getElementById(ELEMENT_FIRST_NAME);
+        return find(ELEMENT_FIRST_NAME);
     }
 
     private WebElement getLastNameInput() {
-        return getElementById(ELEMENT_LAST_NAME);
+        return find(ELEMENT_LAST_NAME);
     }
 
     private WebElement getAdressLine1Input() {
-        return getElementById(ELEMENT_ADDRESS_LINE1);
+        return find(ELEMENT_ADDRESS_LINE1);
     }
 
     private WebElement getAdressLine2Input() {
-        return getElementById(ELEMENT_ADDRESS_LINE2);
+        return find(ELEMENT_ADDRESS_LINE2);
     }
 
     private WebElement getCityInput() {
-        return getElementById(ELEMENT_CITY);
+        return find(ELEMENT_CITY);
     }
 
     private WebElement getPostCodeInput() {
-        return getElementById(ELEMENT_POST_CODE);
+        return find(ELEMENT_POST_CODE);
     }
 
     private WebElement getPhoneInput() {
-        return getElementById(ELEMENT_PHONE);
+        return find(ELEMENT_PHONE);
     }
 
     private WebElement getPhoneNumberInput() {
-        return getElementById(ELEMENT_PHONE_NUMBER);
+        return find(ELEMENT_PHONE_NUMBER);
     }
 
     private WebElement getSaveshippingCheckbox() {
-        return getElementById(ELEMENT_SAVE_SHIPPING);
+        return find(ELEMENT_SAVE_SHIPPING);
     }
 
     private WebElement getSavedAddresse() {

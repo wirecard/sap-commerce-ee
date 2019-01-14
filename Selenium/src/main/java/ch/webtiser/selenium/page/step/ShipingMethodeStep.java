@@ -37,6 +37,6 @@ public class ShipingMethodeStep extends AbstractStep<DeliveryMethod> {
     }
 
     private Select getDeliveryMethodSelect() {
-        return new Select(getElementById(ELEMENT_DELIVERY_METHOD));
+        return new Select(find(ELEMENT_DELIVERY_METHOD));
     }
 }

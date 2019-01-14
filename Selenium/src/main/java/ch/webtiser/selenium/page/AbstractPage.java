@@ -46,7 +46,9 @@ public abstract class AbstractPage implements Page {
 		return pageTitle;
 	}
 
-	protected WebElement getElementById(final By by) {
+	protected WebElement find(final By by) {
 		return driver.findElement(by);
 	}
+
+
 }

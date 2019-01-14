@@ -44,10 +44,10 @@ public class ReviewStep extends AbstractStep<Boolean> {
     }
 
     private WebElement getTermsCheckbox() {
-        return getElementById(ELEMENT_TERMS);
+        return find(ELEMENT_TERMS);
     }
 
     private WebElement getPlaceOrderButton() {
-        return getElementById(ELEMENT_PLACE_ORDER);
+        return find(ELEMENT_PLACE_ORDER);
     }
 }

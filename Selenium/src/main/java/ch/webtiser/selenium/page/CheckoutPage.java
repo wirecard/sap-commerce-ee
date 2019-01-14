@@ -4,10 +4,8 @@ import ch.webtiser.selenium.model.Customer;
 import ch.webtiser.selenium.page.step.*;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +60,7 @@ public class CheckoutPage extends AbstractPage {
 		waitForLoad();
 	}
 
-	public void completeDeliveryMethodeStep() {
+	public void completeDeliveryMethodStep() {
 		fillDeliveryMethod();
 		nextStep();
 		waitForLoad();
@@ -84,7 +82,7 @@ public class CheckoutPage extends AbstractPage {
 
 	public void completeCheckoutWithoutAuthStep(final boolean savePayment) {
         completeDeliveryAddressStep();
-        completeDeliveryMethodeStep();
+        completeDeliveryMethodStep();
         completePaymentStep(savePayment);
         completeSummaryStep() ;
 

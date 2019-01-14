@@ -68,7 +68,7 @@ public class PaymentStep extends AbstractStep<Payment> {
     }
 
     private WebElement getPaymentTypeRadio(final String type) {
-        return getElementById(By.id(PAYMENT_TYPE_PREFIX + type.toLowerCase()));
+        return find(By.id(PAYMENT_TYPE_PREFIX + type.toLowerCase()));
     }
 
     private boolean checkIfListContainsCreditCard(final CreditCardMethod creditCardMethod) {

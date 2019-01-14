@@ -1,7 +1,6 @@
 package ch.webtiser.selenium.page;
 
 import ch.webtiser.selenium.model.DeliveryAddress;
-import ch.webtiser.selenium.model.DeliveryMethod;
 import ch.webtiser.selenium.page.step.ShipmentStep;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.openqa.selenium.By;
@@ -9,8 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class AddAddressPage extends AbstractPage {
 	private static final Logger LOG = LoggerFactory.getLogger(AddAddressPage.class);

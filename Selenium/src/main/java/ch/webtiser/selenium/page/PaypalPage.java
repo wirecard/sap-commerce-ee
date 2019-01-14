@@ -48,7 +48,7 @@ public class PaypalPage extends AbstractPage {
 	}
 
 	public void logInToPaypal() {
-		click(getGoToLoginButton());
+		//click(getGoToLoginButton());
 		WebElement emailInput = getEmailInput();
 		emailInput.click();
 		emailInput.clear();
@@ -98,7 +98,7 @@ public class PaypalPage extends AbstractPage {
 	}
 
 	private WebElement getEmailInput() {
-		new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd -> driver.getTitle().contains("Loggen"));
+		new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd -> driver.getTitle().contains("Log in"));
 		return waitForElement(ELEMENT_EMAIL);
 	}
 
