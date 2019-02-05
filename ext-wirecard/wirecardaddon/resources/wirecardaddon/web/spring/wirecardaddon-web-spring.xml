@@ -129,5 +129,11 @@
         <property name="checkoutFlowFacade" ref="checkoutFlowFacade"/>
         <property name="checkoutFacade" ref="checkoutFacade"/>
     </bean>
+    
+    <alias name="defaultCommerceRedirectStrategy" alias="commerceRedirectStrategy"/>
+    <bean name="defaultCommerceRedirectStrategy" class="de.hybris.platform.yacceleratorstorefront.security.impl.DefaultCommerceRedirectStrategy" parent="redirectStrategy">
+    		<property name="checkoutFlowFacade" ref="checkoutFlowFacade"/>
+    		<property name="expressTargetUrl" value="/checkout/multi/wirecard/express"/>
+    </bean>
 
 </beans>
