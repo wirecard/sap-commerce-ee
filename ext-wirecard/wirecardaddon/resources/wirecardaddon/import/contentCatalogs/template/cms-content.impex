@@ -25,3 +25,4 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
 ;;OrderConfirmationShippingComponent;Order Confirmation Shipping Info Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;;OrderConfirmationShippingComponent
 ;;AccountOrderDetailsShippingComponent;Account Order Details Shipping Info Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;;AccountOrderDetailsShippingComponent
 ;;AccountPaymentDetailsComponent;Account Payment Details Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/account/accountPaymentInfoPage.jsp;;AccountPaymentDetailsComponent
+;;CheckoutComponent;Checkout Display Component;/WEB-INF/views/addons/wirecardaddon/responsive/pages/cart/checkoutDisplay.jsp;;CheckoutComponent
