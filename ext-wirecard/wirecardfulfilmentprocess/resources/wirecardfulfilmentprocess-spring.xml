@@ -30,6 +30,10 @@
         <property name="orderCancelCallbackService" ref="orderCancelCallbackService"/>
         <property name="orderCancelService" ref="orderCancelService"/>
         <property name="wirecardPOExecutionService" ref="wirecardPaymentOperationExecution"/>
+		<property name="calculationService" ref="calculationService" />
+		<property name="impersonationService" ref="impersonationService"/>
+		<property name="promotionsService" ref="promotionsService"/>
+		<property name="timeService" ref="timeService"/>
     </bean>
 
 
