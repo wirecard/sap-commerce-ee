@@ -1,5 +1,5 @@
 # Wirecard Extension for SAP Commerce
-[![SAP Commerce 6.7](https://img.shields.io/badge/SAP_Commerce-6.7-green.svg)](https://www.sap.com)
+[![SAP Commerce 1808](https://img.shields.io/badge/SAP_Commerce-1808-green.svg)](https://www.sap.com)
 
 ***
 
