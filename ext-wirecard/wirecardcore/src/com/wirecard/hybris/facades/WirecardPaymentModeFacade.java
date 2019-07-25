@@ -60,15 +60,7 @@ public interface WirecardPaymentModeFacade {
      */
     PaymentModeData getActiveCreditCardPaymentMode(List<PaymentModeData> paymentModeData, String alias);
 
-    /**
-     * This method search on the active payment methods for WD_UNIONPAY
-     *
-     * @param paymentModeData
-     *     the list of actives payment methods
-     * @return a boolean indicating if unionpay is active
-     */
-    boolean isUnionpayPaymentModeActive(List<PaymentModeData> paymentModeData);
-
+    
     /**
      * This method returns a boolean that indicates if the method payment is inactive
      *

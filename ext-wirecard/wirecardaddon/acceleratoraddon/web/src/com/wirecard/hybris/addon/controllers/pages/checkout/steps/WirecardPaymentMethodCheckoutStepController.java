@@ -107,10 +107,9 @@ public class WirecardPaymentMethodCheckoutStepController extends AbstractCheckou
     private static final String WD_WIRECARD_INVOICE = "wd-wirecard-invoice";
     private static final String WD_SEPA = "wd-sepa";
     private static final String WD_IDEAL = "wd-ideal";
-    private static final String WD_UNIONPAY = "wd-unionpayinternational";
     private static final Set<String> WDS_COMPARE_TO_REDIRECT = new HashSet<>(Arrays.asList(WD_PAYPAL, WD_MASTERPASS, WD_WIRECARD_INSTALL));
     private static final Set<String> WDS_COMPARE_TO_SUMMARY =
-        new HashSet<>(Arrays.asList(WD_POIPIA, WD_SEPA, WD_WIRECARD_INVOICE, WD_UNIONPAY));
+        new HashSet<>(Arrays.asList(WD_POIPIA, WD_SEPA, WD_WIRECARD_INVOICE));
 
     @Resource(name = "addressDataUtil")
     private AddressDataUtil addressDataUtil;
@@ -175,15 +174,8 @@ public class WirecardPaymentMethodCheckoutStepController extends AbstractCheckou
             model.addAttribute("wirecardRequestData", wirecardRequestData);
             model.addAttribute("wirecardURL", wirecardCheckoutFacade.getWirecardBaseURL(paymentModeData.getCode()));
             model.addAttribute("creditCardCode", paymentModeData.getCode());
-        }
-
-        if (wirecardPaymentModeFacade.isUnionpayPaymentModeActive(activePaymentMethods)) {
-            WirecardRequestData wirecardUnionpayRequestData = wirecardCheckoutFacade.getWireCardRequestData(WD_UNIONPAY);
-            model.addAttribute("wirecardURL", wirecardCheckoutFacade.getWirecardBaseURL(WD_UNIONPAY));
-            model.addAttribute("wirecardUnionPayRequestData", wirecardUnionpayRequestData);
-        }
-
-
+        }                         
+       
         /*
        Data for SEPA Mandate pop up
         */

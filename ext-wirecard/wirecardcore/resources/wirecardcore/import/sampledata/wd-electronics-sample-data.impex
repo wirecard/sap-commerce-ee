@@ -22,7 +22,6 @@ INSERT_UPDATE WirecardAuthentication;code[unique=true];maid;secret;username;pass
 ;wd-paypal-authentication;9abf05c1-c266-46ae-8eac-7f87ca97af28;5fca2a83-89ca-4f9e-8cf7-4ca74a02773f;70000-APITEST-AP;qD2wzQ_hrc!8
 ;wd-creditcard3d-authentication;33f6d473-3036-4ca5-acb5-8c64dac862d1;9e0130f6-2e1e-4185-b0d5-dc69079c75cc;70000-APILUHN-CARD;8mhwavKVb91T
 ;wd-creditcard-authentication;9105bb4f-ae68-4768-9c3b-3eda968f57ea;d1efed51-4cb9-46a5-ba7b-0fdc87a66544;70000-APILUHN-CARD;8mhwavKVb91T
-;wd-unionpayinternational-authentication;c6e9331c-5c1f-4fc6-8a08-ef65ce09ddb0 ;16d85b73-79e2-4c33-932a-7da99fb04a9c;70000-APILUHN-CARD ;8mhwavKVb91T
 ;wd-sofort-authentication;f19d17a2-01ae-11e2-9085-005056a96a54;ad39d9d9-2712-4abd-9016-cdeb60dc3c8f;70000-APITEST-AP;qD2wzQ_hrc!8
 ;wd-masterpass-authentication;8bc8ed6d-81a8-43be-bd7b-75b008f89fa6;87e1c187-363f-41d8-abab-7bae0fb03eca;70000-APITEST-AP;qD2wzQ_hrc!8
 ;wd-sepacredit-authentication;4c901196-eff7-411e-82a3-5ef6b6860d64;ecdf5990-0372-47cd-a55d-037dccfe9d25;70000-APITEST-AP;qD2wzQ_hrc!8
@@ -43,7 +42,6 @@ INSERT_UPDATE WirecardPaymentConfiguration;baseStore(uid)[unique=true];paymentMo
 ;electronics;wd-masterpass;wd-masterpass-authentication;;false;EUR
 ;electronics;wd-ideal;wd-ideal-authentication;wd-sepacredit-authentication;;EUR
 ;electronics;wd-sepa;wd-sepadebit-authentication;wd-sepacredit-authentication;;EUR
-;electronics;wd-unionpayinternational;wd-unionpayinternational-authentication;
 ;electronics;wd-poipia;wd-poipia-authentication;wd-sepacredit-authentication;;$currencies
 
 UPDATE WirecardPaymentConfiguration;baseStore(uid)[unique=true];paymentMode(code)[unique=true];totalAmountMin;totalAmountMax;totalAmountCurrency(isocode);years;restrictPromotions[default=false];restrictDigitalProducts
