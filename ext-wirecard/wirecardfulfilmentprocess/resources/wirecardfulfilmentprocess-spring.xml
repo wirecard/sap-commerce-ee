@@ -24,9 +24,9 @@
 
 
 
-    <alias name="wirecardProcessOrderCancellationAction" alias="processOrderCancellationAction"/>
+    <alias name="wirecardProcessOrderCancellationAction" alias="wirecardProcessOrderCancellationAction"/>
     <bean id="wirecardProcessOrderCancellationAction" class="com.wirecard.hybris.fulfilmentprocess.actions.order.cancel.WirecardProcessOrderCancellationAction"
-        parent="abstractAction">
+        parent="processOrderCancellationAction">
         <property name="orderCancelCallbackService" ref="orderCancelCallbackService"/>
         <property name="orderCancelService" ref="orderCancelService"/>
         <property name="wirecardPOExecutionService" ref="wirecardPaymentOperationExecution"/>

@@ -47,9 +47,9 @@ public class MandatePopulator extends AbstractOrderAwarePaymentPopulator {
     }
 
     private Mandate calculateMandate(AbstractOrderModel source, Payment target) {
-        String timeStamp = new SimpleDateFormat("ddMMyyyy").format(System.currentTimeMillis());
+        String timeStamp = new SimpleDateFormat("ddMMyyyyHHmmss").format(System.currentTimeMillis());
         Mandate mandate = new Mandate();
-        mandate.setMandateId(target.getCreditorId() + "-" + source.getCode() + timeStamp);
+        mandate.setMandateId(source.getCode() + "-" + timeStamp);
         mandate.setSignedDate(new SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis()));
         return mandate;
     }
