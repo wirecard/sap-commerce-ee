@@ -621,6 +621,7 @@
     <bean id="threeDSecure2FieldsPopulator" class="com.wirecard.hybris.facades.populators.payment.ThreeDSecure2Populator">
         <property name="sessionService" ref="sessionService" />
         <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+        <property name="wirecardHopPaymentOperationsFacade" ref="wirecardHopPaymentOperationsFacade"/>
     </bean>
 
 </beans>

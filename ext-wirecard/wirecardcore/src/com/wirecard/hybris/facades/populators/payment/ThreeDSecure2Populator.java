@@ -33,12 +33,14 @@ package com.wirecard.hybris.facades.populators.payment;
 import com.wirecard.hybris.core.data.types.MerchantAccountId;
 import com.wirecard.hybris.core.data.types.Payment;
 import com.wirecard.hybris.core.service.WirecardPaymentConfigurationService;
+import com.wirecard.hybris.facades.WirecardHopPaymentOperationsFacade;
 import de.hybris.platform.core.enums.PaymentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.session.Session;
+import de.hybris.platform.util.Config;
 import org.springframework.beans.factory.annotation.Required;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -52,6 +54,7 @@ import java.util.stream.Collectors;
 public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
     private SessionService sessionService;
     private WirecardPaymentConfigurationService wirecardPaymentConfigurationService;
+    private WirecardHopPaymentOperationsFacade wirecardHopPaymentOperationsFacade;
     private static final String AUTHENTICATION_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     //AUTHENTICATION_METHOD_VALUES
@@ -100,6 +103,20 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
     private void findChallengeIndicator(AbstractOrderModel source, Payment target, CustomerModel customer)
     {
         //challenge_indicator
+       if(wirecardHopPaymentOperationsFacade.isSavedCC())
+           target.setChallengeIndicator(CHALLENGE_MANDATE);
+       else if (Config.getParameter("wirecardChallengeIndicator")!=null)
+       {
+           if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_NO_PREFERENCE)==0)
+                target.setChallengeIndicator(CHALLENGE_NO_PREFERENCE);
+
+           if(Config.getParameter("wirecardChallengeIndicator").compareTo(NO_CHALLENGE)==0)
+                target.setChallengeIndicator(NO_CHALLENGE);
+
+           if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MERCHANT_PREFERENCE)==0)
+                target.setChallengeIndicator(CHALLENGE_MERCHANT_PREFERENCE);
+       }
+
     }
 
     private void findTranstactionsInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
@@ -258,7 +275,6 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         //11 Quasi-Cash Transaction
         //28 Prepaid Activation and Loan
 
-        target.setIsoTransactionType("01");
     }
 
     private void findShippingInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
@@ -350,4 +366,14 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
     public void setWirecardPaymentConfigurationService(WirecardPaymentConfigurationService wirecardPaymentConfigurationService) {
         this.wirecardPaymentConfigurationService = wirecardPaymentConfigurationService;
     }
+
+    protected WirecardHopPaymentOperationsFacade getWirecardHopPaymentOperationsFacade() {
+        return wirecardHopPaymentOperationsFacade;
+    }
+
+    @Required
+    public void setWirecardHopPaymentOperationsFacade(WirecardHopPaymentOperationsFacade wirecardHopPaymentOperationsFacade) {
+        this.wirecardHopPaymentOperationsFacade = wirecardHopPaymentOperationsFacade;
+    }
+
 }
