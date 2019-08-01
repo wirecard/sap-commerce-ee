@@ -617,4 +617,10 @@
         <property name="objectFactory" ref="wirecardObjectFactory"/>
     </bean>
 
+    <alias name="threeDSecure2FieldsPopulator" alias="threeDSecure2FieldsPopulator"/>
+    <bean id="threeDSecure2FieldsPopulator" class="com.wirecard.hybris.facades.populators.payment.ThreeDSecure2Populator">
+        <property name="sessionService" ref="sessionService" />
+        <property name="wirecardPaymentConfigurationService" ref="wirecardPaymentConfigurationService"/>
+    </bean>
+
 </beans>

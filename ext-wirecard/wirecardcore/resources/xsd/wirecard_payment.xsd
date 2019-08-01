@@ -784,6 +784,57 @@
                 <xs:element name="pos" type="pos" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="iso" type="iso" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="iso-recon" type="iso-recon" minOccurs="0" maxOccurs="1"/>
+                <!-- 3D Secure 2 Additional Request Fields -->
+                <xs:element name="authentication_method" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="authentication_timestamp" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="challenge_indicator" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="account_creation_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="account_update_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="account_password_change_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_address_first_use" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="transactions_last_day" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="transactions_last_year" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="card_transactions_last_day" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="purchases_last_six_months" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="suspicious_activity" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="card_creation_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="merchant_crm_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="city" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <!--<xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1"/>-->
+                <xs:element name="street1" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="street2" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="street3" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="postal_code" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="home_phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="mobile_phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="work_phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="last_name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="first_name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="shipping_shipping_method" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_city" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_country" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_street1" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_street2" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_street3" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_postal_code" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="shipping_state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_delivery_timeframe" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_delivery_mail" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_reorder_items" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_availability" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_preorder_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_gift_amount" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_gift_amount_currency" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk_info_gift_card_count" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="recurring_expire_date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="recurring_frequency" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="iso_transaction_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="three_d_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+
+
             </xs:sequence>
             <xs:attribute name="self" type="url" use="optional"/>
         </xs:complexType>
