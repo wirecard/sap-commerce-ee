@@ -7,6 +7,7 @@ import ch.webtiser.selenium.model.payment.*;
 import ch.webtiser.selenium.page.*;
 import ch.webtiser.selenium.util.enums.Environment;
 import org.apache.commons.lang3.StringUtils;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -15,8 +16,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class CheckoutTest extends AbstractTestBase {
 	private static final Product TEST_PRODUCT = Product.DEFAULT;
@@ -159,6 +158,8 @@ public class CheckoutTest extends AbstractTestBase {
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 	}
 
+	/*
+	//Removed per WIRE-12
 	@Test
 	public void unionPayCheckoutTest() {
 		TEST_CUSTOMER.setPayment(UnionPayMethod.DEFAULT);
@@ -166,6 +167,8 @@ public class CheckoutTest extends AbstractTestBase {
         chp.completeCheckoutWithoutAuthStep(false);
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 	}
+	
+	 */
 
 	@Test
 	public void poiPaypheckoutTest() {
@@ -185,8 +188,8 @@ public class CheckoutTest extends AbstractTestBase {
 	public void savePaymentCreditCardTest() {
 		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT);
 
-		final AdressBookPage adressBookPage = new AdressBookPage(driver, env);
-		adressBookPage.removeAllAdresses();
+		//final AdressBookPage adressBookPage = new AdressBookPage(driver, env);
+		//adressBookPage.removeAllAdresses();
 
 		final PaymentDetailsPage paymentDetailsPage = PaymentDetailsPage.goTo(driver, env);
 		paymentDetailsPage.removeAllPayments();
