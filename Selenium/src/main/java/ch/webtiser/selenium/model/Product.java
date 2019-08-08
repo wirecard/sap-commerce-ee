@@ -3,9 +3,12 @@ package ch.webtiser.selenium.model;
 import ch.webtiser.selenium.util.PropertyHelper;
 
 public enum Product {
-	TEST_PRODUCT(PropertyHelper.loadProperties().getProperty("testproduct.id"), PropertyHelper.loadProperties().getProperty("testproduct.name"), PropertyHelper.loadProperties().getProperty("testproduct.price"), Currency.DEFAULT);
+	TEST_PRODUCT(PropertyHelper.loadProperties().getProperty("testproduct.id"), PropertyHelper.loadProperties().getProperty("testproduct.name"), PropertyHelper.loadProperties().getProperty("testproduct.price"), Currency.DEFAULT),
+	TEST_NON3DPRODUCT(PropertyHelper.loadProperties().getProperty("testproduct.non3d.id"), PropertyHelper.loadProperties().getProperty("testproduct.non3d.name"), PropertyHelper.loadProperties().getProperty("testproduct.non3d.price"), Currency.DEFAULT);
 
 	public static final Product DEFAULT = TEST_PRODUCT;
+	public static final Product NON3D = TEST_NON3DPRODUCT;
+	
 
 	private final String id;
 	private final String name;

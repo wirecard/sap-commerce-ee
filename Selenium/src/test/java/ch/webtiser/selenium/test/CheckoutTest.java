@@ -19,10 +19,11 @@ import java.util.List;
 
 public class CheckoutTest extends AbstractTestBase {
 	private static final Product TEST_PRODUCT = Product.DEFAULT;
+	private static final Product TEST_NON3DPRODUCT = Product.TEST_NON3DPRODUCT;
 	private static final Customer TEST_CUSTOMER = Customer.DEFAULT;
 
-	private void initProductDetailPage() {
-		final ProductDetailPage pdp = ProductDetailPage.goTo(driver, env, TEST_PRODUCT);
+	private void initProductDetailPage(Product product) {
+		final ProductDetailPage pdp = ProductDetailPage.goTo(driver, env, product);
 		pdp.buttonAddToCart().click();
 		pdp.waitForLoad();
 	}
@@ -37,12 +38,13 @@ public class CheckoutTest extends AbstractTestBase {
 	@Before
 	public void setUp() {
 		super.setUp();
-		initProductDetailPage();
 	}
 
 
 	@Test
 	public void creditCard3DCheckoutTest() {
+
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT_3D);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 
@@ -59,6 +61,8 @@ public class CheckoutTest extends AbstractTestBase {
 
     @Test
     public void creditCard3DFallbackCheckoutTest() {
+
+		initProductDetailPage(TEST_NON3DPRODUCT);
         TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT);
         final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
         chp.completeCheckoutWithoutAuthStep(false);
@@ -67,6 +71,8 @@ public class CheckoutTest extends AbstractTestBase {
 
 	@Test
 	public void paypalCheckoutTest() {
+
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(PayPalMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 
@@ -86,7 +92,7 @@ public class CheckoutTest extends AbstractTestBase {
 	}
 
 
-	@Test
+	//@Test
 	public void masterpassCheckoutTest() {
 		TEST_CUSTOMER.setPayment(MasterpassMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
@@ -108,7 +114,7 @@ public class CheckoutTest extends AbstractTestBase {
 		masterPassPage.masterPassCheckout();
 	}
 
-	@Test
+	//@Test
 	public void alipayCheckoutTest() {
 		TEST_CUSTOMER.setPayment(AlipayMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
@@ -121,6 +127,8 @@ public class CheckoutTest extends AbstractTestBase {
 
 	@Test
 	public void sofortCheckoutTest() {
+
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(SofortMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
         chp.completeCheckoutWithoutAuthStep(false);
@@ -134,6 +142,8 @@ public class CheckoutTest extends AbstractTestBase {
 
 	@Test
 	public void IdealCheckoutTest() {
+
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(IdealMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
         chp.completeCheckoutWithoutAuthStep(false);
@@ -147,6 +157,8 @@ public class CheckoutTest extends AbstractTestBase {
 
 	@Test
 	public void sepaCheckoutTest() {
+
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(SepaMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
         chp.completeDeliveryAddressStep();
@@ -172,6 +184,8 @@ public class CheckoutTest extends AbstractTestBase {
 
 	@Test
 	public void poiPaypheckoutTest() {
+
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(PoiPaiMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
 		chp.completeCheckoutWithoutAuthStep(false);
@@ -186,28 +200,44 @@ public class CheckoutTest extends AbstractTestBase {
 
 	@Test
 	public void savePaymentCreditCardTest() {
-		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT);
 
-		//final AdressBookPage adressBookPage = new AdressBookPage(driver, env);
-		//adressBookPage.removeAllAdresses();
-
+//first run to save payment info
+		
+		initProductDetailPage(TEST_PRODUCT);
+		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT_3D);
+		
 		final PaymentDetailsPage paymentDetailsPage = PaymentDetailsPage.goTo(driver, env);
 		paymentDetailsPage.removeAllPayments();
-
-		AddAddressPage addAddressPage = new AddAddressPage(driver, env);
-		addAddressPage.addAddresse(TEST_CUSTOMER.getDeliveryAddress());
-		addAddressPage = AddAddressPage.goTo(driver,env);
-		addAddressPage.addAddresse(DeliveryAddress.SECOND_ADDRESS);
-
+		
 		CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
-        chp.getShipmentStep().selectAddressFromAddressBook(TEST_CUSTOMER.getDeliveryAddress());
-        chp.completeDeliveryMethodStep();
-        chp.completePaymentStep(true);
-        chp.completeSummaryStep();
 
+		chp.completeDeliveryAddressStep();
+		chp.completeDeliveryMethodStep();
+		chp.completePaymentStep(true);
+
+		 CreditCard3DPage creditCard3DPage = new CreditCard3DPage(driver, env, TEST_CUSTOMER);
+		creditCard3DPage.inputPasswordAndConfirm();
+
+		chp.completeSummaryStep();
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 
-		initProductDetailPage();
+		initProductDetailPage(TEST_PRODUCT);
+		TEST_CUSTOMER.setPayment(CreditCardMethod.DEFAULT_3D);
+		chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
+
+		chp.completeDeliveryAddressStep();
+		chp.completeDeliveryMethodStep();
+		chp.fillPayment();
+		chp.getSaveCardElement().click();
+		chp.getSaveCardChoiceElement().findElement(By.className("btn-primary")).click();
+		
+		creditCard3DPage = new CreditCard3DPage(driver, env, TEST_CUSTOMER);
+		creditCard3DPage.inputPasswordAndConfirm();
+
+		chp.completeSummaryStep();
+		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
+/*
+		initProductDetailPage(TEST_PRODUCT);
 		chp = CheckoutPage.goTo(driver, env, TEST_CUSTOMER);
 		chp.getShipmentStep().selectAddressFromAddressBook(TEST_CUSTOMER.getDeliveryAddress());
 		chp.completeDeliveryMethodStep();
@@ -229,7 +259,7 @@ public class CheckoutTest extends AbstractTestBase {
 
         assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 
-        initProductDetailPage();
+        initProductDetailPage(TEST_PRODUCT);
         chp = CheckoutPage.goTo(driver, env, TEST_CUSTOMER);
         chp.getShipmentStep().selectAddressFromAddressBook(TEST_CUSTOMER.getDeliveryAddress());
         chp.completeDeliveryMethodStep();
@@ -248,7 +278,7 @@ public class CheckoutTest extends AbstractTestBase {
 
         assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 
-        initProductDetailPage();
+        initProductDetailPage(TEST_PRODUCT);
         chp = CheckoutPage.goTo(driver, env, TEST_CUSTOMER);
         chp.getShipmentStep().selectAddressFromAddressBook(TEST_CUSTOMER.getDeliveryAddress());
         chp.completeDeliveryMethodStep();
@@ -277,7 +307,7 @@ public class CheckoutTest extends AbstractTestBase {
 
         assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 
-		initProductDetailPage();
+		initProductDetailPage(TEST_PRODUCT);
         chp = CheckoutPage.goTo(driver, env, TEST_CUSTOMER);
         chp.getShipmentStep().selectAddressFromAddressBook(TEST_CUSTOMER.getDeliveryAddress());
         chp.completeDeliveryMethodStep();
@@ -288,7 +318,7 @@ public class CheckoutTest extends AbstractTestBase {
         assertTrue(chp.getPaymentStep().isCreditCardAvailable((CreditCardMethod) CreditCardMethod.DEFAULT));
         new WebDriverWait(driver, 1).until(wd -> driver.findElement(By.id("colorbox")).getCssValue("display").equals("none"));
         assertFalse(chp.getPaymentStep().isCreditCardAvailable((CreditCardMethod) CreditCardMethod.DEFAULT_AE));
-
+*/
     }
 
 

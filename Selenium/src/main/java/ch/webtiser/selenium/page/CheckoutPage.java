@@ -19,6 +19,9 @@ public class CheckoutPage extends AbstractPage {
 	private static final By ELEMENT_CONFIRMBUTTON = By.id("sepaMandateButton");
     private static final By ELEMENT_ERRORMESSAGE = By.cssSelector("global-alerts.alert");
 	private static final By ELEMENT_SAVE_PAYMENT= By.id("savePaymentMethod");
+	private static final By ELEMENT_SAVED_CARD= By.className("js-saved-payments");
+	private static final By ELEMENT_SAVED_CARD_CHOICE= By.id("WirecardPaymentDetailsForm");
+	
 
 
 
@@ -125,6 +128,13 @@ public class CheckoutPage extends AbstractPage {
 
 	public WebElement getSavePaymentCheckbox() {
 		return driver.findElement(ELEMENT_SAVE_PAYMENT);
+	}
+
+	public WebElement getSaveCardElement() {
+		return driver.findElement(ELEMENT_SAVED_CARD);
+	}
+	public WebElement getSaveCardChoiceElement() {
+		return driver.findElement(ELEMENT_SAVED_CARD_CHOICE);
 	}
 
 	public WebElement getErrorMessageElement() {
