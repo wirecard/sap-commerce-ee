@@ -91,7 +91,7 @@ public class CheckoutTest extends AbstractTestBase {
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 	}
 
-
+	//these 2 are commented out because they added botprotection
 	//@Test
 	public void masterpassCheckoutTest() {
 		TEST_CUSTOMER.setPayment(MasterpassMethod.DEFAULT);
