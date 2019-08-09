@@ -10,4 +10,4 @@ INSERT_UPDATE PriceRow;productId[unique=true];unit(code[unique=true,default=piec
 ;1981415;pieces;EUR;41,34;1;1;false
 
 INSERT_UPDATE User;uid[unique=true];password
-keenreviewer14@hybris.com;1234
+;keenreviewer14@hybris.com;1234
