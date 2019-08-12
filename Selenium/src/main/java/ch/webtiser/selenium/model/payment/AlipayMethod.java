@@ -6,20 +6,26 @@ public class AlipayMethod extends Payment {
 
      public static final Payment DEFAULT = new AlipayMethod(
             PropertyHelper.loadProperties().getProperty("alipay.default.email"),
-            PropertyHelper.loadProperties().getProperty("alipay.default.password")
+            PropertyHelper.loadProperties().getProperty("alipay.default.password"),
+             PropertyHelper.loadProperties().getProperty("alipay.payment.password"),
+             PropertyHelper.loadProperties().getProperty("alipay.gaptcha.code")
     );
 
     private String username;
     private String password;
+    private String paypw;
+    private String captcha;
 
     public AlipayMethod() {
         super(PaymentType.PAYPAL, true);
     }
 
-    public AlipayMethod(String username, String password) {
+    public AlipayMethod(String username, String password, String paypw, String captcha) {
         super(PaymentType.ALIPAYCB, false);
         this.username = username;
         this.password = password;
+        this.paypw = paypw;
+        this.captcha = captcha;
     }
 
     public String getUsername() {
@@ -36,5 +42,13 @@ public class AlipayMethod extends Payment {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPaypw() {
+        return paypw;
+    }
+
+    public String getCaptcha() {
+        return captcha;
     }
 }
