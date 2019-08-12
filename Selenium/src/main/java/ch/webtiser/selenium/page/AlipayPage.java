@@ -19,6 +19,11 @@ public class AlipayPage extends AbstractPage {
 	private static final By ELEMENT_LOGIN_BUTTON = By.id("J_newBtn");
 	private static final By ELEMENT_TERMS = By.id("J_foreAgreement");
 
+	private static final By ELEMENT_CAPTCHA = By.name("checkCode");
+	private static final By ELEMENT_PAYMENTPW = By.id("payPassword_rsainput");
+	private static final By ELEMENT_PAYMENTPW_BUTTON = By.id("J_authSubmit");
+
+
 
 	private final Customer customer;
 
@@ -40,8 +45,12 @@ public class AlipayPage extends AbstractPage {
 		getSwitchToAccountButton().click();
 		getUsernameInput().sendKeys(((AlipayMethod)customer.getPayment()).getUsername());
 		getPasswordInput().sendKeys(((AlipayMethod)customer.getPayment()).getPassword());
-		getTermsCheckbox().click();
+		waitForLoad();
+		getCaptcha().sendKeys(((AlipayMethod)customer.getPayment()).getCaptcha());
 		getLoginButton().click();
+		getPayPassword().sendKeys(((AlipayMethod)customer.getPayment()).getPaypw());
+		getPayPasswordButton().click();
+		waitForLoad();
 	}
 
 
@@ -55,6 +64,16 @@ public class AlipayPage extends AbstractPage {
 
 	private WebElement getLoginButton() {
 		return driver.findElement(ELEMENT_LOGIN_BUTTON);
+	}
+
+	private WebElement getCaptcha() {
+		return driver.findElement(ELEMENT_CAPTCHA);
+	}
+	private WebElement getPayPassword() {
+		return driver.findElement(ELEMENT_PAYMENTPW);
+	}
+	private WebElement getPayPasswordButton() {
+		return driver.findElement(ELEMENT_PAYMENTPW_BUTTON);
 	}
 
 	private WebElement getTermsCheckbox() {

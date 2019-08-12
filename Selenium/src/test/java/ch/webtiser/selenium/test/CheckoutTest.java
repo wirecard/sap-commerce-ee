@@ -114,14 +114,16 @@ public class CheckoutTest extends AbstractTestBase {
 		masterPassPage.masterPassCheckout();
 	}
 
-	//@Test
+	@Test
 	public void alipayCheckoutTest() {
+		initProductDetailPage(TEST_PRODUCT);
 		TEST_CUSTOMER.setPayment(AlipayMethod.DEFAULT);
 		final CheckoutPage chp = new CheckoutPage(driver, env, TEST_CUSTOMER);
         chp.completeCheckoutWithoutAuthStep(false);
 
 		AlipayPage ali = new AlipayPage(driver, env, TEST_CUSTOMER);
 		ali.logInToAlipay();
+		new WebDriverWait(driver, env.timeoutSeconds(),50).until(wd -> wd.getCurrentUrl().contains(env.baseUrl()));
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 	}
 
