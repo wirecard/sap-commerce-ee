@@ -1,0 +1,13 @@
+INSERT_UPDATE StockLevel;available;warehouse(code)[unique=true];productCode[unique=true];inStockStatus(code);
+;88;warehouse_s;1992693;forceInStock
+;88;warehouse_s;1981415;forceInStock
+
+UPDATE BaseStore;uid[unique=true];defaultCurrency(isocode)
+;electronics;EUR
+
+INSERT_UPDATE PriceRow;productId[unique=true];unit(code[unique=true,default=pieces]);currency(isocode)[unique=true];price;minqtd;unitFactor;net
+;1992693;pieces;EUR;541,34;1;1;false
+;1981415;pieces;EUR;41,34;1;1;false
+
+INSERT_UPDATE User;uid[unique=true];password
+;keenreviewer14@hybris.com;1234
