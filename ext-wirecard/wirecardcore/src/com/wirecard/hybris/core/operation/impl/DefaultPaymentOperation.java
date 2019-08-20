@@ -94,6 +94,7 @@ public class DefaultPaymentOperation<T extends ItemModel> implements PaymentOper
 
             // payment data from converter has precedence over passed data
             Payment payment = data.getPayment();
+
             if (getPaymentDataConverter() != null) {
                 payment = getPaymentDataConverter().convert(operationData);
             }
@@ -101,6 +102,12 @@ public class DefaultPaymentOperation<T extends ItemModel> implements PaymentOper
             if (payment == null) {
                 throw new WirecardPaymenException(
                     "Could not execute payment operation neither a data converter nor payment in passed data object are available");
+            }
+
+            if(data.isSavedCC())
+            {
+                String challengeMandate = "04";
+                payment.setChallengeIndicator(challengeMandate);
             }
 
             if (getPaymentProcessor() != null) {
