@@ -107,7 +107,10 @@ public class DefaultPaymentOperation<T extends ItemModel> implements PaymentOper
             if(data.isSavedCC())
             {
                 String challengeMandate = "04";
-                payment.setChallengeIndicator(challengeMandate);
+                if(payment.getThreeDSRequestor()!=null)
+                {
+                    payment.getThreeDSRequestor().setThreeDSRequestorChallengeInd(challengeMandate);
+                }
             }
 
             if (getPaymentProcessor() != null) {

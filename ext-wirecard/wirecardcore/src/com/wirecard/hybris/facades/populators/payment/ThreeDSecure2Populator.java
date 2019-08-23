@@ -30,8 +30,7 @@
 
 package com.wirecard.hybris.facades.populators.payment;
 
-import com.wirecard.hybris.core.data.types.Payment;
-import com.wirecard.hybris.core.data.types.SequenceType;
+import com.wirecard.hybris.core.data.types.*;
 import com.wirecard.hybris.core.service.WirecardPaymentConfigurationService;
 import com.wirecard.hybris.core.strategy.impl.DefaultWirecardPaymentOperationStrategy;
 import com.wirecard.hybris.facades.WirecardHopPaymentOperationsFacade;
@@ -81,63 +80,207 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         timezone = getSessionService().getCurrentSession().getAttribute("timezone");
         customer = getSessionService().getAttribute("user");
 
-        findAccountInfo(source,target,customer);
+        target.setThreeDSRequestor(find3DSRequestor(source,customer));
 
-        findTranstactionsInfo(source,target,customer);
+        target.setThreeDSServerTransID(findThreeDSServerTransID(source,customer));
 
-        findConsumerInfo(source,target,customer);
+        target.setCardholderAccount(findCardHolderAccount(source,customer));
 
-        findShippingInfo(source, target, customer);
+        target.setCardholder(findCardHolder(source,customer));
 
-        findRiskInfo(source, target, customer);
+        target.setPurchase(findPurchase(source,customer));;
 
-        findRecurringInfo(source, target, customer);
-
-        findChallengeIndicator(target);
-
-        findIsoTranstactionType(source,target);
-
-        findThreeDVersion(source,target);
+        target.setBrowserInformation(findBrowserInformation());
     }
 
-    private void findChallengeIndicator(Payment target)
+    private BrowserInformation findBrowserInformation()
     {
-        if (Config.getParameter("wirecardChallengeIndicator")!=null)
-       {
-           if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MANDATE)==0)
-               target.setChallengeIndicator(CHALLENGE_MANDATE);
+        BrowserInformation browserInformation = new BrowserInformation();
 
-           if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_NO_PREFERENCE)==0)
-               target.setChallengeIndicator(CHALLENGE_NO_PREFERENCE);
-
-           if(Config.getParameter("wirecardChallengeIndicator").compareTo(NO_CHALLENGE)==0)
-                target.setChallengeIndicator(NO_CHALLENGE);
-
-           if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MERCHANT_PREFERENCE)==0)
-                target.setChallengeIndicator(CHALLENGE_MERCHANT_PREFERENCE);
-       }
-
+        browserInformation.setChallengeWindowSize(null); //NOT AVAILABLE
+        return browserInformation;
     }
 
-    private void findTranstactionsInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
+    private Purchase findPurchase(AbstractOrderModel source, CustomerModel customer)
     {
-        if(customer!=null)
+        Purchase purchase = new Purchase();
+
+        purchase.setMerchantRiskIndicator(findMerchantRiskIndicator(source,customer));
+        Double totalAmount = source.getTotalPrice()+source.getTotalTax();
+        purchase.setPurchaseAmount(totalAmount.toString());
+        purchase.setPurchaseCurrency(source.getCurrency().getIsocode());
+        purchase.setPurchaseExponent(null); // NOT AVAILABLE
+        purchase.setTransType(null); //NOT AVAILABLE
+
+        return purchase;
+    }
+
+    private MerchantRiskIndicator findMerchantRiskIndicator(AbstractOrderModel source, CustomerModel customer)
+    {
+        MerchantRiskIndicator merchantRiskIndicator = new MerchantRiskIndicator();
+
+        merchantRiskIndicator.setDeliveryEmailAddress(null); //NOT AVAILABLE
+        merchantRiskIndicator.setDeliveryTimeframe(null); //NOT AVAILABLE
+        merchantRiskIndicator.setGiftCardAmount(null); //NOT AVAILABLE
+        merchantRiskIndicator.setGiftCardCurr(null); //NOT AVAILABLE
+        merchantRiskIndicator.setGiftCardCount(null); //NOT AVAILABLE
+        merchantRiskIndicator.setPreOrderDate(null); //NOT AVAILABLE
+        if(findRiskInfoAvailability(source))
         {
-            //transactions_last_day
-            target.setTransactionsLastDay(findTransactionsCountLastDays(customer, 1));
-
-            //transactions_last_year
-            target.setTransactionsLastYear(findTransactionsCountLastDays(customer, 365));
-
-            //card_transactions_last_day
-            //NOT AVAILABLE
-
-            //purchases_last_six_months
-            target.setPurchasesLastSixMonths(findOrdersCountLastSixMonths(customer));
-
-            //suspicious_activity -> Boolean indicating if the merchant knows of suspicious activities by the customer
-            //NOT AVAILABLE
+            // 01 Currently available
+            merchantRiskIndicator.setPreOrderPurchaseInd("01");
+        }else
+        {
+            // 02 Future availability
+            merchantRiskIndicator.setPreOrderPurchaseInd("02");
         }
+        if(findRiskInfoReorderItems(source,customer))
+        {
+            // 01 First time
+            merchantRiskIndicator.setReorderItemsInd("01");
+        }else
+        {
+            // 01 Reorder
+            merchantRiskIndicator.setReorderItemsInd("02");
+        }
+        merchantRiskIndicator.setShipIndicator(null); //NOT AVAILABLE
+
+        return merchantRiskIndicator;
+    }
+
+    private Cardholder findCardHolder(AbstractOrderModel source, CustomerModel customer)
+    {
+        Cardholder cardholder = new Cardholder();
+
+        cardholder.setBillAddrCity(source.getPaymentAddress().getTown());
+        cardholder.setBillAddrCountry(source.getPaymentAddress().getCountry().getIsocode());
+        cardholder.setBillAddrLine1(source.getPaymentAddress().getLine1());
+        cardholder.setBillAddrLine2(source.getPaymentAddress().getLine2());
+        cardholder.setBillAddrLine3(null); //NOT AVAILABLE
+        cardholder.setBillAddrPostCode(source.getPaymentAddress().getPostalcode());
+        cardholder.setBillAddrState(null);//NOT AVAILABLE
+        cardholder.setEmail(source.getPaymentAddress().getEmail());
+        cardholder.setWorkPhone(findWorkPhone(customer));
+        cardholder.setHomePhone(findHomePhone(customer));
+        cardholder.setMobilePhone(findMobilePhone(customer));
+        cardholder.setShipAddrCity(source.getDeliveryAddress().getTown());
+        cardholder.setShipAddrCountry(source.getDeliveryAddress().getCountry().getIsocode());
+        cardholder.setShipAddrLine1(source.getDeliveryAddress().getLine1());
+        cardholder.setShipAddrLine2(source.getDeliveryAddress().getLine2());
+        cardholder.setShipAddrLine3(null); //NOT AVAILABLE
+        cardholder.setShipAddrPostCode(source.getDeliveryAddress().getPostalcode());
+        cardholder.setShipAddrState(null);//NOT AVAILABLE
+
+        return cardholder;
+    }
+
+    private Phone findHomePhone(CustomerModel customer)
+    {
+        Phone homePhone= new Phone();
+
+        return homePhone;
+    }
+
+    private Phone findWorkPhone(CustomerModel customer)
+    {
+        Phone workPhone= new Phone();
+
+        return workPhone;
+    }
+
+    private Phone findMobilePhone(CustomerModel customer)
+    {
+        Phone mobilePhone= new Phone();
+
+        return mobilePhone;
+    }
+
+    private CardholderAccount findCardHolderAccount(AbstractOrderModel source,CustomerModel customer)
+    {
+        CardholderAccount cardholderAccount = new CardholderAccount();
+
+        cardholderAccount.setAcctInfo(findAcctInfo(customer));
+        cardholderAccount.setAcctID(getWirecardPaymentConfigurationService().getAuthentication(source).getMaid());
+
+        return cardholderAccount;
+    }
+
+    private AcctInfo findAcctInfo(CustomerModel customer)
+    {
+        AcctInfo acctInfo = new AcctInfo();
+
+        Date accountCreation = customer.getCreationtime();
+        if (accountCreation != null)
+        {
+
+            defaultDateFormat.setTimeZone(timezone);
+            String creationDate = defaultDateFormat.format(accountCreation);
+            acctInfo.setChAccDate(creationDate);
+        }
+        Date accountModification = customer.getModifiedtime();
+        if (accountModification != null)
+        {
+
+            defaultDateFormat.setTimeZone(timezone);
+            String creationDate = defaultDateFormat.format(accountModification);
+            acctInfo.setChAccChange(creationDate);
+        }
+        acctInfo.setChAccPwChange(null); //NOT AVAILABLE
+        acctInfo.setShipAddressUsage(null); //NOT AVAILABLE
+        acctInfo.setTxnActivityDay(findTransactionsCountLastDays(customer, 1));
+        acctInfo.setTxnActivityYear(findTransactionsCountLastDays(customer, 365));
+        acctInfo.setProvisionAttemptsDay(null); //NOT AVAILABLE
+        acctInfo.setNbPurchaseAccount(findOrdersCountLastSixMonths(customer));
+        acctInfo.setSuspiciousAccActivity(null); //NOT AVAILABLE
+        acctInfo.setPaymentAccAge(null); //NOT AVAILABLE
+
+        return acctInfo;
+    }
+
+    private String findThreeDSServerTransID(AbstractOrderModel source,CustomerModel customer)
+    {
+        return null; //NOT AVAILABLE
+    }
+
+    private ThreeDSRequestor find3DSRequestor(AbstractOrderModel source, CustomerModel customer)
+    {
+        ThreeDSRequestor threeDSRequestor= new ThreeDSRequestor();
+
+        threeDSRequestor.setThreeDSRequestorAuthenticationInfo(findThreeDSRequestorAuthenticationInfo());
+        if (Config.getParameter("wirecardChallengeIndicator")!=null)
+        {
+            if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MANDATE)==0)
+                threeDSRequestor.setThreeDSRequestorChallengeInd(CHALLENGE_MANDATE);
+
+            if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_NO_PREFERENCE)==0)
+                threeDSRequestor.setThreeDSRequestorChallengeInd(CHALLENGE_NO_PREFERENCE);
+
+            if(Config.getParameter("wirecardChallengeIndicator").compareTo(NO_CHALLENGE)==0)
+                threeDSRequestor.setThreeDSRequestorChallengeInd(NO_CHALLENGE);
+
+            if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MERCHANT_PREFERENCE)==0)
+                threeDSRequestor.setThreeDSRequestorChallengeInd(CHALLENGE_MERCHANT_PREFERENCE);
+        }
+        threeDSRequestor.setThreeDSRequestorPriorAuthenticationInfo(null); // (NOT AVAILABLE)
+
+        return threeDSRequestor;
+    }
+
+    private ThreeDSRequestorAuthenticationInfo findThreeDSRequestorAuthenticationInfo()
+    {
+        ThreeDSRequestorAuthenticationInfo threeDSRequestorAuthenticationInfo = new ThreeDSRequestorAuthenticationInfo();
+
+        threeDSRequestorAuthenticationInfo.setThreeDSReqAuthMethod(null);// (NOT AVAILABLE)
+        Date lastLogin = customer.getLastLogin();
+        if (lastLogin != null)
+        {
+
+            authenticationTimestampFormat.setTimeZone(timezone);
+            String dateAuthenticationTimestamp = authenticationTimestampFormat.format(lastLogin);
+            threeDSRequestorAuthenticationInfo.setThreeDSReqAuthTimestamp(dateAuthenticationTimestamp);
+        }
+
+        return threeDSRequestorAuthenticationInfo;
     }
 
     private String findOrdersCountLastSixMonths(CustomerModel customer)
@@ -174,192 +317,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
 
     }
 
-    private void findAccountInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        if(customer!=null)
-        {
-            findAuthenticationMethod(source, target, customer);
-
-            //authentication_timestamp
-            Date lastLogin = customer.getLastLogin();
-            if (lastLogin != null)
-            {
-
-                authenticationTimestampFormat.setTimeZone(timezone);
-                String dateAuthenticationTimestamp = authenticationTimestampFormat.format(lastLogin);
-                target.setAuthenticationTimestamp(dateAuthenticationTimestamp);
-            }
-            //account_creation_date
-            Date accountCreation = customer.getCreationtime();
-            if (accountCreation != null)
-            {
-
-                defaultDateFormat.setTimeZone(timezone);
-                String creationDate = defaultDateFormat.format(accountCreation);
-                target.setAccountCreationDate(creationDate);
-            }
-            //account_update_date
-            Date accountModification = customer.getModifiedtime();
-            if (accountModification != null)
-            {
-
-                defaultDateFormat.setTimeZone(timezone);
-                String creationDate = defaultDateFormat.format(accountModification);
-                target.setAccountUpdateDate(creationDate);
-            }
-            //account_password_change_date
-            //(NOT AVAILABLE)
-
-            //shipping_address_first_use
-            //(NOT AVAILABLE)
-        }
-    }
-
-    private void findAuthenticationMethod(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        //authentication_method
-        // (NOT AVAILABLE)
-    }
-
-    private void findConsumerInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        //merchant_crm_id
-        target.setMerchantCrmId( getWirecardPaymentConfigurationService().getAuthentication(source).getMaid());
-
-        //city
-        target.setCity(source.getPaymentAddress().getTown());
-
-        //country
-        target.setCountry(source.getPaymentAddress().getCountry().getIsocode());
-
-        //street1
-        target.setStreet1(source.getPaymentAddress().getLine1());
-
-        //street2
-        target.setStreet2(source.getPaymentAddress().getLine2());
-
-        //street3
-        //NOT AVAILABLE
-
-        //postal_code
-        target.setPostalCode(source.getPaymentAddress().getPostalcode());
-
-        //state
-        //NOT AVAILABLE
-
-        //email
-        target.setEmail(source.getPaymentAddress().getEmail());
-
-        //home_phone
-        //NOT AVAILABLE
-
-        //mobile_phone
-        //NOT AVAILABLE
-
-        //work_phone
-        //NOT AVAILABLE
-
-        //last_name
-        target.setLastName(source.getPaymentAddress().getLastname());
-
-        //first_name
-        target.setFirstName(source.getPaymentAddress().getFirstname());
-    }
-
-
-    private void findThreeDVersion(AbstractOrderModel source, Payment target)
-    {
-        //three_d_version 1.0 or 2.1
-        //(NOT AVAILABLE)
-    }
-
-    private void findIsoTranstactionType(AbstractOrderModel source, Payment target)
-    {
-        //iso_transaction_type
-        //01 Goods/Service
-        //03 Check acceptance
-        //10 Account Funding
-        //11 Quasi-Cash Transaction
-        //28 Prepaid Activation and Loan
-
-        //(NOT AVAILABLE)
-
-    }
-
-    private void findShippingInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        findShippingShippingMethodInfo(source,target, customer);
-
-        //shipping_city
-        target.setShippingCity(source.getDeliveryAddress().getTown());
-
-        //shipping_country
-        target.setShippingCountry(source.getDeliveryAddress().getCountry().getIsocode());
-
-        //shipping_street1
-        target.setShippingStreet1(source.getDeliveryAddress().getLine1());
-
-        //shipping_street2
-        target.setShippingStreet2(source.getDeliveryAddress().getLine2());
-
-        //shipping_street3
-
-        //shipping_postal_code
-        target.setShippingPostalCode(source.getDeliveryAddress().getPostalcode());
-        //shipping_state
-
-    }
-
-    private void findShippingShippingMethodInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        //shipping_shipping_method
-        //home_delivery, verified_address_delivery,  other_address_delivery, store_pick_up, digital_goods, digital_tickets, other_verified
-        //(NOT AVAILABLE)
-    }
-
-    private void findRecurringInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        //recurring_expire_date
-        //(NOT AVAILABLE)
-
-        //recurring_frequency
-        //(NOT AVAILABLE)
-    }
-
-    private void findRiskInfo(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        //risk_info_delivery_time
-        // 01 Electronic delivery
-        // 02 Same-day delivery
-        // 03 Overnight delivery
-        // 04 Two day or more delivery
-        //(NOT AVAILABLE)
-
-        //risk_info_delivery_mail   -> email used within electronic-delivery
-        //NOT AVAILABLE
-
-
-        findRiskInfoReorderItems(source,target,customer);
-
-        //risk_info_availability
-        if(findRiskInfoAvailability(source,target,customer))
-        {
-            // 01 Currently available
-            target.setRiskInfoAvailability("01");
-        }else
-        {
-            // 02 Future availability
-            target.setRiskInfoAvailability("02");
-        }
-
-
-        //risk_info_preorder_date   -> Expected shipping date for preorder goods
-        //(NOT AVAILABLE)
-
-        findRiskInfoGiftCard(source, target, customer);
-    }
-
-    private boolean findRiskInfoAvailability(AbstractOrderModel source, Payment target, CustomerModel customer)
+    private boolean findRiskInfoAvailability(AbstractOrderModel source)
     {
         //For true availability every entry within the order must have availability on any store warehouse
         String warehousePattern="Warehouse:";
@@ -406,9 +364,8 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         return false;
     }
 
-    private void findRiskInfoReorderItems(AbstractOrderModel source, Payment target, CustomerModel customer)
+    private boolean findRiskInfoReorderItems(AbstractOrderModel source, CustomerModel customer)
     {
-        //risk_info_reorder_items
         boolean firstTime=true;
         List<AbstractOrderEntryModel> orderEntries =source.getEntries();
         for(OrderModel order : customer.getOrders())
@@ -420,26 +377,12 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         }
         if(firstTime)
         {
-            // 01 First time
-            target.setRiskInfoReorderItems("01");
+            return true;
         }
         else
         {
-            // 02 Reorder
-            target.setRiskInfoReorderItems("02");
+            return false;
         }
-    }
-
-    private void findRiskInfoGiftCard(AbstractOrderModel source, Payment target, CustomerModel customer)
-    {
-        //risk_info_gift_amount
-        //(NOT AVAILABLE)
-
-        //risk_info_amount_currency
-        //(NOT AVAILABLE)
-
-        //risk_info_gift_card_count
-        //(NOT AVAILABLE)
     }
 
     public SessionService getSessionService() {
