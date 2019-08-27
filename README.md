@@ -8,8 +8,8 @@ Before proceeding, please read [general information](https://github.com/wirecard
 
 ***
 
-## SAP Hybris documenations - Wiki
+## SAP Commerce documenations - Wiki
 
-[SAP Hybris Wiki](https://github.com/wirecard/sap-commerce-ee/wiki) provides detailed technical documentation.
+[SAP Commerce Wiki](https://github.com/wirecard/sap-commerce-ee/wiki) provides detailed technical documentation.
 It lists all available [payment methods](https://github.com/wirecard/sap-commerce-ee/wiki#supported-payment-methods) and post-processing operations.
 Furthermore, it includes extensive instructions how to [install](https://github.com/wirecard/sap-commerce-ee/wiki/Installation) and [configure](https://github.com/wirecard/sap-commerce-ee/wiki/Configuration).
