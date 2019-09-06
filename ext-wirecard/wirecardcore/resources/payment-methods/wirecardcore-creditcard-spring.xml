@@ -151,6 +151,7 @@
             <list merge="true">
                 <ref bean="wirecardPaymentOrderItemsPopulator"/>
                 <ref bean="checkEnrollmentParentTransactionIdPopulator"/>
+                <ref bean="threeDSecure2FieldsPopulator"/>
             </list>
         </property>
     </bean>
@@ -164,6 +165,7 @@
                 <ref bean="personalDataPaymentPopulator"/>
                 <ref bean="wirecardPaymentOrderItemsPopulator"/>
                 <ref bean="checkEnrollmentTransactionTypePopulator"/>
+                <ref bean="threeDSecure2FieldsPopulator"/>
             </list>
         </property>
     </bean>

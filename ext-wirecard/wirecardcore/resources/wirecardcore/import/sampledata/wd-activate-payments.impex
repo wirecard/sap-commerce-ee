@@ -21,5 +21,4 @@ INSERT_UPDATE StandardPaymentMode; code[unique = true]; active[default = true]
 ; wd-sepa                  ;
 ; wd-poipia                ;
 ; wd-wirecard-invoice      ;
-; wd-unionpayinternational ;
 
