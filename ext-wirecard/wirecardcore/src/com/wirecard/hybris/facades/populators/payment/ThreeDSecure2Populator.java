@@ -139,7 +139,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         Calendar cal = Calendar.getInstance();
         cal.setTime(now);
         cal.add(Calendar.MONTH, -6);
-        return (int)customer.getOrders().stream().filter(order -> order.getDate().after(cal.getTime())).count());
+        return (int) customer.getOrders().stream().filter(order -> order.getDate().after(cal.getTime())).count();
     }
 
     private int findTransactionsCountLastDays(CustomerModel customer, int days)
