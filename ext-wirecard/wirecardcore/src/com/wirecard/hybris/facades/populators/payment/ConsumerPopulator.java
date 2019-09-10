@@ -54,6 +54,7 @@ public class ConsumerPopulator implements Populator<AddressModel, Consumer> {
         target.setEmail(source.getEmail());
         target.setPhone(source.getPhone1());
         target.setAddress(getAddressConverter().convert(source));
+        target.setMerchantCrmId(((CustomerModel) source.getOwner()).getCustomerID());
         if (source.getDateOfBirth() != null) {
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             target.setDateOfBirth(format.format(source.getDateOfBirth()));

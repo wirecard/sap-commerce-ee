@@ -53,6 +53,8 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import sun.util.calendar.ZoneInfo;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,11 +85,24 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         customer = getSessionService().getAttribute("user");
 
         target.setAccountHolder(findAccountHolder(source,customer, target.getAccountHolder()));
+        target.setRiskInfo(findRiskInfo(source, target, customer));
 
     }
 
+    private RiskInfo findRiskInfo(AbstractOrderModel source, Payment target,CustomerModel customer ){
+        RiskInfo riskInfo = new RiskInfo();
+        riskInfo.setAvailability(findRiskInfoAvailability(source));
+        riskInfo.setDeliveryMail(source.getDeliveryAddress().getEmail());
+        riskInfo.setReorderItems(findRiskInfoReorderItems(source, customer));//not available
+        riskInfo.setGift(null);//not available
+        riskInfo.setDeliveryTimeframe(null);//dependant on Delivery method that are different for each merchant.
+        return riskInfo;
+    }
+
+
     private AccountHolder findAccountHolder(AbstractOrderModel source,CustomerModel customer, AccountHolder holder){
         holder.setAccountInfo(findAccountInfo(source, customer));
+        holder.setMerchantCrmId(customer.getCustomerID());
         return holder;
     }
 
@@ -117,8 +132,9 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
                     info.setChallengeIndicator(CHALLENGE_MERCHANT_PREFERENCE);
             }
             //challenge-indicator
-            info.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(customer.getCreationtime().toInstant().toString()));
-            info.setUpdateDate(DatatypeFactory.newInstance().newXMLGregorianCalendar( customer.getModifiedtime().toInstant().toString()));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
+            info.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(formatter.format(customer.getCreationtime().toInstant())));
+            info.setUpdateDate(DatatypeFactory.newInstance().newXMLGregorianCalendar( formatter.format(customer.getModifiedtime().toInstant())));
             info.setPasswordChangeDate(null);//Not available
             info.setShippingAddressFirstUse(null);
             info.setTransactionsLastDay(findTransactionsCountLastDays(customer, 1));
@@ -149,10 +165,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         List<OrderModel> orders = findOrdersInLastDays(customer, days);
         for(OrderModel order: orders)
         {
-            if(validStatus.contains(order.getPaymentStatus()))
-            {
-                transactions+= order.getPaymentTransactions().size();
-            }
+           transactions+= order.getPaymentTransactions().size();
         }
         return transactions;
     }
@@ -167,7 +180,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
 
     }
 
-    private boolean findRiskInfoAvailability(AbstractOrderModel source)
+    private String findRiskInfoAvailability(AbstractOrderModel source)
     {
         //For true availability every entry within the order must have availability on any store warehouse
         String warehousePattern="Warehouse:";
@@ -184,10 +197,10 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
             }
             if(!entryAvailable)
             {
-                return false;
+                return "02";
             }
         }
-        return true;
+        return "01";
     }
 
     private boolean parseAvailability(String availability)
@@ -214,7 +227,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         return false;
     }
 
-    private boolean findRiskInfoReorderItems(AbstractOrderModel source, CustomerModel customer)
+    private String findRiskInfoReorderItems(AbstractOrderModel source, CustomerModel customer)
     {
         boolean firstTime=true;
         List<AbstractOrderEntryModel> orderEntries =source.getEntries();
@@ -227,11 +240,11 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         }
         if(firstTime)
         {
-            return true;
+            return "01";
         }
         else
         {
-            return false;
+            return "02";
         }
     }
 

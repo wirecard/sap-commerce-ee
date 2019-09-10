@@ -850,6 +850,64 @@
             <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
+    <xs:complexType name="risk-info">
+        <xs:all>
+            <xs:element name="availability" type="availability-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="delivery-mail" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="delivery-timeframe" type="delivery-timeframe" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="gift" type="gift-card-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="preorder-date" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reorder-items" type="reorder-type" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:simpleType name="availability-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: preOrderPurchaseInd
+                01 = Merchandise available,
+                02 = Future availability</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="reorder-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: reorderItemsInd
+                01 = First time ordered,
+                02 = Reordered</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="delivery-timeframe">
+        <xs:annotation>
+            <xs:documentation>3DS2: deliveryTimeframe
+                01 = Electronic Delivery,
+                02 = Same day shipping
+                03 = Overnight shipping,
+                04 = Two-day or more shipping</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="04"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="gift-card-type">
+        <xs:sequence>
+            <xs:element name="gift-card" type="gift-type" minOccurs="1" maxOccurs="10"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="gift-type">
+        <xs:all>
+            <xs:element name="amount" type="money" minOccurs="1" maxOccurs="1"/>
+        </xs:all>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
     <xs:element name="payment">
         <xs:complexType>
             <xs:sequence>
@@ -933,8 +991,10 @@
                 <xs:element name="pos" type="pos" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="iso" type="iso" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="iso-recon" type="iso-recon" minOccurs="0" maxOccurs="1"/>
+                
                 <!-- 3D Secure 2 Additional Request Fields -->
                 <xs:element name="browser" type="browser" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk-info" type="risk-info" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
             <xs:attribute name="self" type="url" use="optional"/>
         </xs:complexType>
