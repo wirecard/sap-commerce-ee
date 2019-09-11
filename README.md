@@ -13,7 +13,7 @@ The [**P**ayment **S**ervice **D**irective 2 (PSD2)](https://doc.wirecard.com/Cr
 PSD2 comes into full effect on September 14, 2019.  
 
 ***
-## Documenation 
+## Documentation 
 
 [SAP Commerce Wiki](https://github.com/wirecard/sap-commerce-ee/wiki) provides detailed technical documentation.
 It lists all available [payment methods](https://github.com/wirecard/sap-commerce-ee/wiki#supported-payment-methods) and post-processing operations.
