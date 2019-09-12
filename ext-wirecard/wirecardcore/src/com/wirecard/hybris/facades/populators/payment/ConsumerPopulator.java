@@ -35,6 +35,7 @@ import com.wirecard.hybris.core.data.types.Consumer;
 import com.wirecard.hybris.core.data.types.Gender;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import org.springframework.beans.factory.annotation.Required;
@@ -54,7 +55,11 @@ public class ConsumerPopulator implements Populator<AddressModel, Consumer> {
         target.setEmail(source.getEmail());
         target.setPhone(source.getPhone1());
         target.setAddress(getAddressConverter().convert(source));
-        target.setMerchantCrmId(((CustomerModel) source.getOwner()).getCustomerID());
+        if(source.getOwner().getClass().isInstance(CustomerModel.class)){
+            target.setMerchantCrmId(((CustomerModel) source.getOwner()).getCustomerID());
+        }else{
+            target.setMerchantCrmId(null);//empty since its a guest
+        }
         if (source.getDateOfBirth() != null) {
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             target.setDateOfBirth(format.format(source.getDateOfBirth()));
