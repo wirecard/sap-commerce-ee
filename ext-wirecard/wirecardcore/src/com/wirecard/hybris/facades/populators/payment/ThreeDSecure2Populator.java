@@ -32,9 +32,6 @@ package com.wirecard.hybris.facades.populators.payment;
 
 import com.wirecard.hybris.core.data.types.*;
 import com.wirecard.hybris.core.service.WirecardPaymentConfigurationService;
-import com.wirecard.hybris.core.strategy.impl.DefaultWirecardPaymentOperationStrategy;
-import com.wirecard.hybris.facades.WirecardHopPaymentOperationsFacade;
-import de.hybris.platform.basecommerce.enums.OrderEntryStatus;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import de.hybris.platform.core.enums.PaymentStatus;
@@ -42,7 +39,6 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.servicelayer.session.Session;
 import de.hybris.platform.stock.StockService;
 import de.hybris.platform.util.Config;
 import org.slf4j.Logger;
@@ -50,9 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import sun.util.calendar.ZoneInfo;
 
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -65,28 +59,17 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
     private SessionService sessionService;
     private WirecardPaymentConfigurationService wirecardPaymentConfigurationService;
     private StockService stockService;
-    //DATE FORMATS
-    private static final String AUTHENTICATION_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-    private static final SimpleDateFormat authenticationTimestampFormat = new SimpleDateFormat(AUTHENTICATION_TIMESTAMP_FORMAT);
-    private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-    //CHALLENGE_INDICATOR_VALUES
-    private static final String CHALLENGE_NO_PREFERENCE = "01";
-    private static final String NO_CHALLENGE = "02";
-    private static final String CHALLENGE_MERCHANT_PREFERENCE= "03";
-    private static final String CHALLENGE_MANDATE = "04";
-    //Common attributes
-    private ZoneInfo timezone;
     private CustomerModel customer;
 
     @Override
     public void doPopulate(AbstractOrderModel source, Payment target) throws ConversionException {
-        timezone = getSessionService().getCurrentSession().getAttribute("timezone");
         customer = getSessionService().getAttribute("user");
 
         target.setAccountHolder(findAccountHolder(source,customer, target.getAccountHolder()));
         target.setRiskInfo(findRiskInfo(source, target, customer));
-
+        Consumer consumer = target.getConsumer();
+        consumer.setMerchantCrmId(customer.getCustomerID());
+        target.setConsumer(consumer);
     }
 
     private RiskInfo findRiskInfo(AbstractOrderModel source, Payment target,CustomerModel customer ){
@@ -116,22 +99,11 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
             {
                 info.setAuthenticationTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar( lastLogin.toInstant().toString()));
             }
-
+            //challenge-indicator
             if (Config.getParameter("wirecardChallengeIndicator")!=null)
             {
-                if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MANDATE)==0)
-                    info.setChallengeIndicator(CHALLENGE_MANDATE);
-
-                if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_NO_PREFERENCE)==0)
-                    info.setChallengeIndicator(CHALLENGE_NO_PREFERENCE);
-
-                if(Config.getParameter("wirecardChallengeIndicator").compareTo(NO_CHALLENGE)==0)
-                    info.setChallengeIndicator(NO_CHALLENGE);
-
-                if(Config.getParameter("wirecardChallengeIndicator").compareTo(CHALLENGE_MERCHANT_PREFERENCE)==0)
-                    info.setChallengeIndicator(CHALLENGE_MERCHANT_PREFERENCE);
+                info.setChallengeIndicator(Config.getParameter("wirecardChallengeIndicator"));
             }
-            //challenge-indicator
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
             info.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(formatter.format(customer.getCreationtime().toInstant())));
             info.setUpdateDate(DatatypeFactory.newInstance().newXMLGregorianCalendar( formatter.format(customer.getModifiedtime().toInstant())));
@@ -165,7 +137,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         List<OrderModel> orders = findOrdersInLastDays(customer, days);
         for(OrderModel order: orders)
         {
-           transactions+= order.getPaymentTransactions().size();
+            transactions+= order.getPaymentTransactions().size();
         }
         return transactions;
     }
@@ -233,9 +205,13 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         List<AbstractOrderEntryModel> orderEntries =source.getEntries();
         for(OrderModel order : customer.getOrders())
         {
-            if(Collections.disjoint(order.getEntries(),orderEntries)==false)
-            {
-                firstTime = false;
+            if(firstTime){
+                for(AbstractOrderEntryModel entry:orderEntries){
+                    if(order.getEntries().contains(entry)){
+                        firstTime=false;
+                        break;
+                    }
+                }
             }
         }
         if(firstTime)
