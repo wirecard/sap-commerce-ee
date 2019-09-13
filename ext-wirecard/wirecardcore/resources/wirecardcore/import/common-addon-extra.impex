@@ -18,7 +18,6 @@ INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];realfilename;@medi
 ;;paypalLogo;paypal.png;$siteResource/images/paypal.png;image/png;Paypal;
 ;;creditcardLogo_en;ccard.png;$siteResource/images/creditcard.png;image/png;Credit Card;
 ;;creditcardLogo_de;ccard.png;$siteResource/images/creditcard.png;image/png;Kreditkarte;
-; ; unionpayinternationalLogo ; unionpayinternational.png ; $siteResource/images/unionpayinternational.png ; image/png ; Unionpay International ;
 ;;sofortLogo;sofort.png;$siteResource/images/sofortbanking.png;image/png;Sofort;
 ;;masterpassLogo;masterpass.png;$siteResource/images/masterpass.png;image/png;Masterpass
 ;;alipayXLogo;alipayXLogo.png;$siteResource/images/alipayxborder.png;image/png;Alipay Cross Border
@@ -32,7 +31,6 @@ INSERT_UPDATE StandardPaymentMode;code[unique=true];paymentAlias;name[lang=de];n
 ;wd-creditcard;creditcard;Kreditkarte;Credit card;Bezahlung mit Kreditkarte;Payment via Credit card;;CreditCardPaymentInfo;creditcardLogo_de;creditcardLogo_en;AUTHORIZE
 ;wd-creditcard-3dsattempt;creditcard;Kreditkarte;Credit card;Bezahlung mit Kreditkarte;Payment via Credit card;;CreditCardPaymentInfo;creditcardLogo_de;creditcardLogo_en;AUTHORIZE
 ;wd-creditcard-3dsonly;creditcard;Kreditkarte;Credit card;Bezahlung mit Kreditkarte;Payment via Credit card;;CreditCardPaymentInfo;creditcardLogo_de;creditcardLogo_en;AUTHORIZE
-;wd-unionpayinternational;unionpay;Unionpay International;UnionpayInternational;Bezahlung mit UnionpayInternational;Payment via UnionpayInternational;;CreditCardPaymentInfo;unionpayinternationalLogo;unionpayinternationalLogo;AUTHORIZE
 ;wd-masterpass;masterpass;Masterpass;Masterpass;Bezahlung mit Masterpass;Payment via Masterpass;;MasterpassPaymentInfo;masterpassLogo;masterpassLogo;AUTHORIZE
 ;wd-sofort;sofortbanking;Sofort;Sofort;Bezahlung mit Sofort;Payment via Sofort;;SofortPaymentInfo;sofortLogo;sofortLogo;PURCHASE_WITH_HOP
 ;wd-alipay-xborder;alipay_xborder;Alipay Cross Border;Alipay Cross Border;Bezahlung mit Alipay Cross Border;Payment via Alipay Cross Border;;AlipayXborderPaymentInfo;alipayXLogo;alipayXLogo;PURCHASE_WITH_HOP

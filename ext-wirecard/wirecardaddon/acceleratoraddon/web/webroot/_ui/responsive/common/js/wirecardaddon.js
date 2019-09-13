@@ -22,13 +22,6 @@ var wirecardaddon = {
                     onSuccess:     submitPaymentDetailsForm,
                     onError:       doNothing
                 })
-            } else if ($('#wd-unionpay').is(':checked')) {
-                WirecardPaymentPage.seamlessSubmitForm({
-                    requestData:   wirecardUnionPayRequestData,
-                    wrappingDivId: 'unionpay-form-div',
-                    onSuccess:     submitUnionPayPaymentDetailsForm,
-                    onError:       doNothing
-                })
             } else if ($('#wd-sepadirectdebit').is(':checked')) {
                 if ($('#bankAccountOwner-SEPA-DD').val().length > 1) {
                     ACC.colorbox.open('Sepa Mandate Conditions', {
@@ -92,22 +85,14 @@ var wirecardaddon = {
         var ccDiv       = $('#creditcard-form-div');
         var savedCC     = $('#saved-cards-div');
         var savePayment = $('#save-payment-div');
-        var unionpayDiv = $('#unionpay-form-div');
 
         if ($('#wd-creditcard').is(':checked')) {
             ccDiv.attr({'style': 'display: block'});
-            unionpayDiv.attr({'style': 'display: none'});
             savedCC.attr({'style': 'display: block'});
             savePayment.attr({'style': 'display: block'});
 
-        } else if ($('#wd-unionpay').is(':checked')) {
-            unionpayDiv.attr({'style': 'display: block'});
-            ccDiv.attr({'style': 'display: none'});
-            savedCC.attr({'style': 'display: none'});
-            savePayment.attr({'style': 'display: none'});
         } else {
             ccDiv.attr({'style': 'display: none'});
-            unionpayDiv.attr({'style': 'display: none'});
             savedCC.attr({'style': 'display: none'});
             savePayment.attr({'style': 'display: none'});
         }
@@ -183,11 +168,6 @@ function submitPaymentDetailsForm(response) {
     $('#wirecardPaymentDetailsForm').submit();
 }
 
-function submitUnionPayPaymentDetailsForm(response) {
-    $('#tokenId').val(response.token_id);
-    $('#wirecardPaymentDetailsForm').submit();
-}
-
 $(document).ready(function () {
 
     allSupportedBillingCountries = $('#addresscountry').html();
@@ -209,12 +189,7 @@ $(document).ready(function () {
         creditcard.parent().append($('#creditcard-form-div'));
         creditcard.parent().append($('#save-payment-div'));
     }
-
-    var unionpayinternational = $('#wd-unionpay');
-    if (unionpayinternational.length > 0) {
-        unionpayinternational.parent().append($('#unionpay-form-div'));
-    }
-
+    
     var sepa = $('#wd-sepadirectdebit');
     if (sepa.length > 0) {
         sepa.parent().append($('#sepa-credentials-div'));
@@ -236,14 +211,6 @@ $(document).ready(function () {
             WirecardPaymentPage.seamlessRenderForm({
                 requestData:   requestData,
                 wrappingDivId: 'creditcard-form-div',
-                onSuccess:     doNothing,
-                onError:       doNothing
-            });
-        }
-        if ($('#wd-unionpay').length > 0) {
-            WirecardPaymentPage.seamlessRenderForm({
-                requestData:   wirecardUnionPayRequestData,
-                wrappingDivId: 'unionpay-form-div',
                 onSuccess:     doNothing,
                 onError:       doNothing
             });
