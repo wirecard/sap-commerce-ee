@@ -70,6 +70,7 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
         Consumer consumer = target.getConsumer();
         consumer.setMerchantCrmId(customer.getCustomerID());
         target.setConsumer(consumer);
+        target.setIsoTransactionType("01");
     }
 
     private RiskInfo findRiskInfo(AbstractOrderModel source, Payment target,CustomerModel customer ){
@@ -93,7 +94,11 @@ public class ThreeDSecure2Populator extends AbstractOrderAwarePaymentPopulator {
     private AccountInfo findAccountInfo (AbstractOrderModel source ,CustomerModel customer){
         AccountInfo info  = new AccountInfo();
         try {
-            info.setAuthenticationMethod(null);//Not available
+            if(customer.getCustomerID() != null){
+                info.setAuthenticationMethod("02");
+            }else{
+                info.setAuthenticationMethod("01");
+            }
             Date lastLogin = customer.getLastLogin();
             if (lastLogin != null)
             {

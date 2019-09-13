@@ -908,6 +908,23 @@
         </xs:all>
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
+    <xs:simpleType name="iso-transaction-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: transType
+                01 = Goods/ Service Purchase,
+                03 = Check Acceptance,
+                10 = Account Funding,
+                11 = Quasi-Cash Transaction,
+                28 = Prepaid Activation and Load </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="10"/>
+            <xs:enumeration value="11"/>
+            <xs:enumeration value="28"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:element name="payment">
         <xs:complexType>
             <xs:sequence>
@@ -917,6 +934,7 @@
                                 maxOccurs="1"/>
                 </xs:choice>
                 <xs:element name="transaction-id" type="uuid" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="iso-transaction-type" type="iso-transaction-type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="request-id" type="request-id" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="transaction-type" type="transaction-type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="transaction-state" type="transaction-state" minOccurs="0" maxOccurs="1"/>
