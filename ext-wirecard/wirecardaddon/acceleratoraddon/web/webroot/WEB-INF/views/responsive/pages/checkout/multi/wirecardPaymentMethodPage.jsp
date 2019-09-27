@@ -28,20 +28,6 @@
             };
             WirecardPaymentPage.seamlessRenderForm();
         </script>
-        <script>
-            var wirecardUnionPayRequestData = {
-                merchant_account_id:       "${wirecardUnionPayRequestData.merchantAccountId}",
-                request_id:                "${wirecardUnionPayRequestData.requestId}",
-                request_time_stamp:        "${wirecardUnionPayRequestData.requestTimeStamp}",
-                payment_method:            "${wirecardUnionPayRequestData.paymentMethod}",
-                transaction_type:          "${wirecardUnionPayRequestData.transactionType}",
-                requested_amount:          "${wirecardUnionPayRequestData.requestedAmount}",
-                requested_amount_currency: "${wirecardUnionPayRequestData.requestedAmountCurrency}",
-                locale:                    "${wirecardUnionPayRequestData.locale}",
-                request_signature:         "${wirecardUnionPayRequestData.requestSignature}"
-            };
-            WirecardPaymentPage.seamlessRenderForm();
-        </script>
     </jsp:attribute>
 
     <jsp:body>
@@ -114,8 +100,6 @@
                                         </div>
 
                                         <div id="creditcard-form-div" class="seamless-form-div" style="display: none"></div>
-
-                                        <div id="unionpay-form-div" class="seamless-form-div" style="display: none"></div>
 
                                         <div id="save-payment-div" style="display: none">
                                             <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">

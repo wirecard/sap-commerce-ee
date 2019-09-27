@@ -296,9 +296,12 @@
             <!-- DD-MM-YYYY format-->
             <xs:element name="date-of-birth" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="mobile-phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="work-phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="address" minOccurs="0" maxOccurs="1"/>
             <xs:element name="merchant-crm-id" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="social-security-number" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="account-info" type="account-info" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="consumer">
@@ -701,6 +704,227 @@
             <xs:element name="policy-score" type="xs:int" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
+    <xs:complexType name="account-info">
+        <xs:sequence>
+            <xs:element name="authentication-method" type="authentication-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="authentication-timestamp" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="challenge-indicator" type="challenge-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="creation-date" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="update-date" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="password-change-date" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="shipping-address-first-use" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="transactions-last-day" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="transactions-last-year" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="card-transactions-last-day" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="purchases-last-six-months" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="suspicious-activity" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="card-creation-date" type="xs:date" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="challenge-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: threeDSRequestorChallengeInd
+                01 = No preference,
+                02 = No challenge requested,
+                03 = Challenge requested: 3DS Requestor Preference,
+                04 = Challenge requested: Mandate</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="04"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="authentication-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: threeDSReqAuthMethod
+                01 = No 3DS Requestor authentication occurred (i.e. cardholder “logged in” as guest),
+                02 = Login to the cardholder account at the 3DS Requestor system using 3DS Requestor’s own credentials,
+                03 = Login to the cardholder account at the 3DS Requestor system using federated ID,
+                04 = Login to the cardholder account at the 3DS Requestor system using issuer credentials,
+                05 = Login to the cardholder account at the 3DS Requestor system using third-party authentication,
+                06 = Login to the cardholder account at the 3DS Requestor system using FIDO Authenticator</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="04"/>
+            <xs:enumeration value="05"/>
+            <xs:enumeration value="06"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="browser">
+        <xs:all>
+            <xs:element name="accept" type="string2048" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="user-agent" type="string256" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ip-address" type="ip-address" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="hostname" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="browser-version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="os" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="time-zone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="screen-resolution" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="referrer" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+            <xs:element name="headers" type="headers" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="cookies" type="cookies" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="challenge-window-size" type="window-size" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="color-depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="java-enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="language" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:simpleType name="string1">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string36">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="36"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string50">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string64">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="64"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string256">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="256"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="string2048">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="2048"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="window-size">
+        <xs:annotation>
+            <xs:documentation>3DS2: challengeWindowSize
+                01 = 250 x 400,
+                02 = 390 x 400,
+                03 = 500 x 600,
+                04 = 600 x 400,
+                05 = Full screen</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="04"/>
+            <xs:enumeration value="05"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="cookies">
+        <xs:sequence>
+            <xs:element name="cookie" type="cookie" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="cookie">
+        <xs:all>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="domain" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max-age" type="xs:long" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="secure" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="http-only" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="headers">
+        <xs:sequence>
+            <xs:element name="header" type="header" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="header">
+        <xs:all>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="risk-info">
+        <xs:all>
+            <xs:element name="availability" type="availability-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="delivery-mail" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="delivery-timeframe" type="delivery-timeframe" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="gift" type="gift-card-type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="preorder-date" type="xs:date" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reorder-items" type="reorder-type" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:simpleType name="availability-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: preOrderPurchaseInd
+                01 = Merchandise available,
+                02 = Future availability</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="reorder-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: reorderItemsInd
+                01 = First time ordered,
+                02 = Reordered</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="delivery-timeframe">
+        <xs:annotation>
+            <xs:documentation>3DS2: deliveryTimeframe
+                01 = Electronic Delivery,
+                02 = Same day shipping
+                03 = Overnight shipping,
+                04 = Two-day or more shipping</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="02"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="04"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="gift-card-type">
+        <xs:sequence>
+            <xs:element name="gift-card" type="gift-type" minOccurs="1" maxOccurs="10"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="gift-type">
+        <xs:all>
+            <xs:element name="amount" type="money" minOccurs="1" maxOccurs="1"/>
+        </xs:all>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="iso-transaction-type">
+        <xs:annotation>
+            <xs:documentation>3DS2: transType
+                01 = Goods/ Service Purchase,
+                03 = Check Acceptance,
+                10 = Account Funding,
+                11 = Quasi-Cash Transaction,
+                28 = Prepaid Activation and Load </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="01"/>
+            <xs:enumeration value="03"/>
+            <xs:enumeration value="10"/>
+            <xs:enumeration value="11"/>
+            <xs:enumeration value="28"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:element name="payment">
         <xs:complexType>
             <xs:sequence>
@@ -710,6 +934,7 @@
                                 maxOccurs="1"/>
                 </xs:choice>
                 <xs:element name="transaction-id" type="uuid" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="iso-transaction-type" type="iso-transaction-type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="request-id" type="request-id" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="transaction-type" type="transaction-type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="transaction-state" type="transaction-state" minOccurs="0" maxOccurs="1"/>
@@ -784,6 +1009,10 @@
                 <xs:element name="pos" type="pos" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="iso" type="iso" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="iso-recon" type="iso-recon" minOccurs="0" maxOccurs="1"/>
+                
+                <!-- 3D Secure 2 Additional Request Fields -->
+                <xs:element name="browser" type="browser" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="risk-info" type="risk-info" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
             <xs:attribute name="self" type="url" use="optional"/>
         </xs:complexType>

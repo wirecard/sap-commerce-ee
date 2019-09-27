@@ -17,7 +17,6 @@
     <import resource="payment-methods/wirecardcore-sepa-spring.xml"/>
     <import resource="payment-methods/wirecardcore-poipia-spring.xml"/>
     <import resource="payment-methods/wirecardcore-ratepayinvoice-spring.xml"/>
-    <import resource="payment-methods/wirecardcore-unionpayinternational-spring.xml"/>
 
     <bean id="wirecardcoreSystemSetup" parent="abstractCoreSystemSetup" class="com.wirecard.hybris.core.setup.WirecardcoreSystemSetup">
         <!-- constructor arg injection example -->
@@ -136,5 +135,7 @@
         <property name="replacedInterceptors" ref="uniqueCatalogItemValidator"/>
         <property name="order" value="5000"/>
     </bean>
+
+   
 
 </beans>

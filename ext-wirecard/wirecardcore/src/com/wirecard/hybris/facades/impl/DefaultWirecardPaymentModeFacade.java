@@ -57,7 +57,6 @@ public class DefaultWirecardPaymentModeFacade implements WirecardPaymentModeFaca
 
     private static final String REQUEST_DATA_DATE_FORMAT = "yyyyMMddHHmmss";
     private static final String UTC = "UTC";
-    private static final String WD_UNIONPAY = "wd-unionpayinternational";
 
     private I18NService i18NService;
     private WirecardPaymentModeService wirecardPaymentModeService;
@@ -81,11 +80,6 @@ public class DefaultWirecardPaymentModeFacade implements WirecardPaymentModeFaca
 
     }
 
-    public boolean isUnionpayPaymentModeActive(List<PaymentModeData> paymentModeData) {
-
-        return paymentModeData.stream().anyMatch(paymentMode -> paymentMode.getCode().equals(WD_UNIONPAY));
-
-    }
 
     @Override
     public boolean isPurchase(String paymentMethodChosen) {
