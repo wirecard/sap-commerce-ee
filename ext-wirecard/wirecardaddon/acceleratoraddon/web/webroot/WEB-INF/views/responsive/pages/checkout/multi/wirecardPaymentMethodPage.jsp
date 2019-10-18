@@ -44,7 +44,7 @@
                                 <div class="headline"><spring:theme code="checkout.multi.paymentMethod"/></div>
 
                                 <ycommerce:testId code="wirecardPaymentDetailsForm">
-                                    <form:form id="wirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" commandName="wirecardPaymentDetailsForm" action="./add" method="POST">
+                                    <form:form id="wirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" modelAttribute="wirecardPaymentDetailsForm" action="./add" method="POST">
 
                                         <input type="hidden" id="tokenId" value="" name="tokenId">
                                         <c:forEach var="paymentMethod" items="${paymentMethodList}">
@@ -211,7 +211,7 @@
                     <div id="savedpaymentsbody">
                         <c:forEach items="${paymentInfos}" var="paymentInfo" varStatus="status">
                             <div class="saved-payment-entry">
-                                <form id="WirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" commandName="wirecardPaymentDetailsForm" action="${request.contextPath}/checkout/multi/wirecard/payment-method/add" method="POST">
+                                <form id="WirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" modelAttribute="wirecardPaymentDetailsForm" action="${request.contextPath}/checkout/multi/wirecard/payment-method/add" method="POST">
                                     <input type="hidden" name="tokenId" value="${fn:escapeXml(paymentInfo.token)}"/>
                                     <input type="hidden" name="paymentMethodChosen" value="${creditCardCode}"/>
                                     <input type="hidden" name="isSavedCC" value="true"/>

@@ -46,8 +46,9 @@ public class AlipayPage extends AbstractPage {
 		getUsernameInput().sendKeys(((AlipayMethod)customer.getPayment()).getUsername());
 		getPasswordInput().sendKeys(((AlipayMethod)customer.getPayment()).getPassword());
 		waitForLoad();
-		getCaptcha().sendKeys(((AlipayMethod)customer.getPayment()).getCaptcha());
+		//getCaptcha().sendKeys(((AlipayMethod)customer.getPayment()).getCaptcha());
 		getLoginButton().click();
+		waitForLoad();
 		getPayPassword().sendKeys(((AlipayMethod)customer.getPayment()).getPaypw());
 		getPayPasswordButton().click();
 		waitForLoad();
