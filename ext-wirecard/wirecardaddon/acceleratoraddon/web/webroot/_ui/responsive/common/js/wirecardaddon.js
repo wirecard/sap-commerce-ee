@@ -20,7 +20,7 @@ var wirecardaddon = {
                     requestData:   requestData,
                     wrappingDivId: 'creditcard-form-div',
                     onSuccess:     submitPaymentDetailsForm,
-                    onError:       doNothing
+                    onError:       displayError
                 })
             } else if ($('#wd-sepadirectdebit').is(':checked')) {
                 if ($('#bankAccountOwner-SEPA-DD').val().length > 1) {
@@ -161,6 +161,28 @@ function doNothing(response) {
 
     console.log(response);
 
+}
+
+function displayError(response) {
+
+    var errormessage = response.status_description_1;
+    var div = document.createElement('div');
+    div.setAttribute('class', 'global-alerts');
+    var innerDiv = document.createElement('div');
+    innerDiv.setAttribute('class', 'alert alert-danger alert-dismissable getAccAlert"');
+    var text = '<button class="close closeAccAlert" aria-hidden="true" data-dismiss="alert" type="button">×</button>' + errormessage
+    innerDiv.innerHTML = text;
+    div.appendChild(innerDiv);
+    var innerWrapper = document.getElementsByClassName("main__inner-wrapper");
+    innerWrapper[0].prepend(div);
+    var button = innerDiv.getElementsByClassName("closeAccAlert");
+    button[0].addEventListener("click", removeGlobalMessage , false);
+
+}
+
+function removeGlobalMessage() {
+    var innerWrapper = document.getElementsByClassName("main__inner-wrapper");
+    innerWrapper[0].removeChild(innerWrapper[0].firstChild);
 }
 
 function submitPaymentDetailsForm(response) {
