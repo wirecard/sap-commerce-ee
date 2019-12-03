@@ -66,7 +66,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import reactor.util.Assert;
+import org.junit.Assert;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -256,7 +256,7 @@ public class DefaultWirecardTransactionServiceTest {
     @Test
     public void lookForAuthorizationTransactions() {
 
-        Assert.isTrue(defaultWirecardTransactionService.lookForAcceptedTransactions(order, PaymentTransactionType.AUTHORIZATION));
+        Assert.assertTrue(defaultWirecardTransactionService.lookForAcceptedTransactions(order, PaymentTransactionType.AUTHORIZATION));
     }
 
     @Test

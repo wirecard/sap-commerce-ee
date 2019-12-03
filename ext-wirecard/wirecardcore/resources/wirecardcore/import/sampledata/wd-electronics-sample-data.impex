@@ -27,7 +27,7 @@ INSERT_UPDATE WirecardAuthentication;code[unique=true];maid;secret;username;pass
 ;wd-sepacredit-authentication;4c901196-eff7-411e-82a3-5ef6b6860d64;ecdf5990-0372-47cd-a55d-037dccfe9d25;70000-APITEST-AP;qD2wzQ_hrc!8
 ;wd-ideal-authentication;b4ca14c0-bb9a-434d-8ce3-65fbff2c2267;dbc5a498-9a66-43b9-bf1d-a618dd399684;70000-APITEST-AP;qD2wzQ_hrc!8
 ;wd-sepadebit-authentication;4c901196-eff7-411e-82a3-5ef6b6860d64;ecdf5990-0372-47cd-a55d-037dccfe9d25;70000-APITEST-AP;qD2wzQ_hrc!8;;DE98ZZZ09999999999;SepaCreditor;SepaStoreCity
-;wd-alipay-xborder-authentication;7ca48aa0-ab12-4560-ab4a-af1c477cce43;91cf6a8c-2a44-427e-b255-e3647350e247;70000-APITEST-AP;qD2wzQ_hrc!8
+;wd-alipay-xborder-authentication;47cd4edf-b13c-4298-9344-53119ab8b9df;94fe4f40-16c5-4019-9c6c-bc33ec858b1d;16390-testing;3!3013=D3fD8X7
 ;wd-poipia-authentication;105ab3e8-d16b-4fa0-9f1f-18dd9b390c94;2d96596b-9d10-4c98-ac47-4d56e22fd878;70000-APITEST-AP;qD2wzQ_hrc!8
 ;wd-ratepayinvoice-authentication;fa02d1d4-f518-4e22-b42b-2abab5867a84;dbc5a498-9a66-43b9-bf1d-a618dd399684;70000-APITEST-AP;qD2wzQ_hrc!8;
 
