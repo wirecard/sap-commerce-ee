@@ -201,6 +201,19 @@
                     </div>
                 </div>
             </div>
+            <div style="display:none" id="popup_creditcard_error_div">
+                <div class="pad_left" id="popup_creditcard_error">
+                    <div class="span-13 ">
+                        <div class="textpage textpage-erros">
+                            <div id="creditcard_error_space">
+                            </div>
+                            <button id="reload" class="btn btn-primary" onclick="javascript:window.location.reload(false);">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <c:if test="${not empty paymentInfos}">
                 <div id="savedpayments">
                     <div id="savedpaymentstitle">
