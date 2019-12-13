@@ -47,7 +47,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -85,7 +85,11 @@ public class WirecardTakePaymentActionTest {
     @Test
     public void executeActionTestSuccess() {
 
-        when(impersonationService.executeInContext(Mockito.anyObject(), Mockito.anyObject())).thenReturn(OrderStatus.PAYMENT_CAPTURED);
+        try{
+            when(impersonationService.executeInContext(Mockito.anyObject(), Mockito.anyObject())).thenReturn(OrderStatus.PAYMENT_CAPTURED);
+        }catch(Throwable t){
+            fail("IDK probably should not throw that throwable");
+        }
 
         AbstractSimpleDecisionAction.Transition transition;
 
@@ -99,9 +103,11 @@ public class WirecardTakePaymentActionTest {
     public void executeActionTestFailed() {
 
         AbstractSimpleDecisionAction.Transition transition;
-
-        when(impersonationService.executeInContext(Mockito.anyObject(), Mockito.anyObject())).thenReturn(OrderStatus.CANCELLED);
-
+        try{
+            when(impersonationService.executeInContext(Mockito.anyObject(), Mockito.anyObject())).thenReturn(OrderStatus.CANCELLED);
+        }catch(Throwable t){
+            fail("IDK probably should not throw that throwable");
+        }
         transition = wirecardTakePaymentAction.executeAction(orderProcessModel);
 
         //compare both datas

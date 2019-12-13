@@ -137,7 +137,7 @@ public class CheckoutTest extends AbstractTestBase {
 
 		SofortPage sofortPage = new SofortPage(driver, env, TEST_CUSTOMER);
 		sofortPage.checkoutWithSofort();
-		new WebDriverWait(driver, env.timeoutSeconds(),50).until(wd -> wd.getCurrentUrl().contains(env.baseUrl()));
+		new WebDriverWait(driver, env.timeoutSeconds(),100).until(wd -> wd.getCurrentUrl().contains(env.baseUrl()));
 		assertTrue(driver.getCurrentUrl().contains("orderConfirmation"));
 
 	}

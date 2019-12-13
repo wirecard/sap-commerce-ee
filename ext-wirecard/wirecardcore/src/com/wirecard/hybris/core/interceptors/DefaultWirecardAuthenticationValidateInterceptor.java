@@ -39,7 +39,7 @@ import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import reactor.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DefaultWirecardAuthenticationValidateInterceptor implements ValidateInterceptor {
 
@@ -77,7 +77,7 @@ public class DefaultWirecardAuthenticationValidateInterceptor implements Validat
                 }
             }
             if ((ctx.isNew(model) || ctx.isModified(model, WirecardAuthenticationModel.CREDITORID))
-                && authenticationModel.getCode().contains("wd-sepadebit") && !StringUtils.hasText(authenticationModel.getCreditorId())) {
+                && authenticationModel.getCode().contains("wd-sepadebit") && StringUtils.isEmpty(authenticationModel.getCreditorId())) {
                 throw new InterceptorException(
                     ERROR_MESSAGE_CREDITOR);
             }

@@ -44,7 +44,7 @@
                                 <div class="headline"><spring:theme code="checkout.multi.paymentMethod"/></div>
 
                                 <ycommerce:testId code="wirecardPaymentDetailsForm">
-                                    <form:form id="wirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" commandName="wirecardPaymentDetailsForm" action="./add" method="POST">
+                                    <form:form id="wirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" modelAttribute="wirecardPaymentDetailsForm" action="./add" method="POST">
 
                                         <input type="hidden" id="tokenId" value="" name="tokenId">
                                         <c:forEach var="paymentMethod" items="${paymentMethodList}">
@@ -201,6 +201,20 @@
                     </div>
                 </div>
             </div>
+            <div style="display:none" id="popup_creditcard_error_div">
+                <div class="pad_left" id="popup_creditcard_error">
+                    <div class="span-13 ">
+                        <div class="textpage textpage-erros">
+                            <div id="creditcard_error_space">
+                            </div>
+                            <br/>
+                            <button id="reload" class="btn btn-primary" onclick="javascript:window.location.reload(false);">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <c:if test="${not empty paymentInfos}">
                 <div id="savedpayments">
                     <div id="savedpaymentstitle">
@@ -211,7 +225,7 @@
                     <div id="savedpaymentsbody">
                         <c:forEach items="${paymentInfos}" var="paymentInfo" varStatus="status">
                             <div class="saved-payment-entry">
-                                <form id="WirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" commandName="wirecardPaymentDetailsForm" action="${request.contextPath}/checkout/multi/wirecard/payment-method/add" method="POST">
+                                <form id="WirecardPaymentDetailsForm" name="wirecardPaymentDetailsForm" modelAttribute="wirecardPaymentDetailsForm" action="${request.contextPath}/checkout/multi/wirecard/payment-method/add" method="POST">
                                     <input type="hidden" name="tokenId" value="${fn:escapeXml(paymentInfo.token)}"/>
                                     <input type="hidden" name="paymentMethodChosen" value="${creditCardCode}"/>
                                     <input type="hidden" name="isSavedCC" value="true"/>

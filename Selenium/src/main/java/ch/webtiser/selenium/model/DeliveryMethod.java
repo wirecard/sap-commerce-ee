@@ -1,8 +1,8 @@
 package ch.webtiser.selenium.model;
 
 public enum DeliveryMethod {
-    STANDARD_NET("standard-gross"),
-    PREMIUM_NET("premium-gross");
+    STANDARD_NET("standard-net"),
+    PREMIUM_NET("premium-net");
 
     public static final DeliveryMethod DEFAULT = STANDARD_NET;
 

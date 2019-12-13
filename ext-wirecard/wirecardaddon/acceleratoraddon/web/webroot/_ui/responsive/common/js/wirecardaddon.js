@@ -20,7 +20,7 @@ var wirecardaddon = {
                     requestData:   requestData,
                     wrappingDivId: 'creditcard-form-div',
                     onSuccess:     submitPaymentDetailsForm,
-                    onError:       doNothing
+                    onError:       displayError
                 })
             } else if ($('#wd-sepadirectdebit').is(':checked')) {
                 if ($('#bankAccountOwner-SEPA-DD').val().length > 1) {
@@ -161,6 +161,29 @@ function doNothing(response) {
 
     console.log(response);
 
+}
+
+function displayError(response) {
+
+    var errormessage = response.status_description_1;
+    var innerWrapper = document.getElementById("creditcard_error_space");
+    innerWrapper.prepend(decodeHtml(errormessage));
+    ACC.colorbox.open('Error', {
+        href:       '#popup_creditcard_error',
+        inline:     true,
+        width:      '425px',
+        onClosed: function () {
+            $(this).colorbox.resize();
+            location = location;
+        }
+    });
+
+}
+
+function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }
 
 function submitPaymentDetailsForm(response) {
