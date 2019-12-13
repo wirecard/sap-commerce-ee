@@ -167,17 +167,23 @@ function displayError(response) {
 
     var errormessage = response.status_description_1;
     var innerWrapper = document.getElementById("creditcard_error_space");
-    innerWrapper.prepend(errormessage);
+    innerWrapper.prepend(decodeHtml(errormessage));
     ACC.colorbox.open('Error', {
         href:       '#popup_creditcard_error',
         inline:     true,
         width:      '425px',
-        onComplete: function () {
+        onClosed: function () {
             $(this).colorbox.resize();
             location = location;
         }
     });
 
+}
+
+function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }
 
 function submitPaymentDetailsForm(response) {

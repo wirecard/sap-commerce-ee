@@ -207,6 +207,7 @@
                         <div class="textpage textpage-erros">
                             <div id="creditcard_error_space">
                             </div>
+                            <br/>
                             <button id="reload" class="btn btn-primary" onclick="javascript:window.location.reload(false);">
                                 OK
                             </button>
