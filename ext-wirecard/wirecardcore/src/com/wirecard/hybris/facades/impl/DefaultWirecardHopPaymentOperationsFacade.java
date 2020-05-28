@@ -140,8 +140,8 @@ public class DefaultWirecardHopPaymentOperationsFacade implements WirecardHopPay
 
 	private Payment executePaymentOperationOnCart(String operation, PaymentOperationData data, String orderNumber)
 			throws WirecardPaymenException {
-		//WIRE-19: Fallback for cases where the order model cannot found.
-		//This might be necessary if a client loses their session, for example during a paypal payment.
+		//WIRE-19: Fallback for cases where the order model cannot be found.
+		//This might be necessary if a client loses their session, for example during a PayPal payment.
 		//We try to get the cart instead and proceed with the payment normally after casting it into an order.
 		//If that also fails, we throw a PaymentException to gracefully logout the client.
 		try {
