@@ -31,6 +31,7 @@
 package com.wirecard.hybris.core.dao.impl;
 
 import com.wirecard.hybris.core.dao.WirecardOrderModelDao;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.internal.dao.AbstractItemDao;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -46,6 +47,11 @@ public class DefaultWirecardOrderModelDao extends AbstractItemDao implements Wir
         "SELECT {" + OrderModel.PK + "} FROM {" + OrderModel._TYPECODE + "} WHERE {"
             + OrderModel.GUID + "} = ?guid AND {" + OrderModel.VERSIONID + "} IS NULL";
 
+    private static final String CART_QUERY =
+            "SELECT {" + CartModel.PK + "} FROM {" +
+                    CartModel._TYPECODE + "} WHERE {" +
+                    CartModel.GUID + "} = ?guid";
+
     @Override
     public OrderModel getOrderModelByGuid(String guid) {
         ServicesUtil.validateParameterNotNull(guid, "Guid must not be null");
@@ -55,5 +61,15 @@ public class DefaultWirecardOrderModelDao extends AbstractItemDao implements Wir
         FlexibleSearchQuery flexibleSearchQuery =
             new FlexibleSearchQuery(CONFIG_QUERY, params);
         return getFlexibleSearchService().<OrderModel>searchUnique(flexibleSearchQuery);
+    }
+
+    @Override
+    public CartModel getCartModelByGuid(String guid) {
+        ServicesUtil.validateParameterNotNull(guid, "Guid must not be null");
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put("guid", guid);
+        FlexibleSearchQuery query = new FlexibleSearchQuery(CART_QUERY, params);
+        return getFlexibleSearchService().<CartModel>searchUnique(query);
     }
 }

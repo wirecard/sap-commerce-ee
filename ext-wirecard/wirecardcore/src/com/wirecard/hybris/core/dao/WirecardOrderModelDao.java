@@ -30,17 +30,27 @@
 
 package com.wirecard.hybris.core.dao;
 
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.internal.dao.Dao;
 
 public interface WirecardOrderModelDao extends Dao {
 
     /**
-     * Filter OrderModel by guid pased as parameter and versionId is null
+     * Filter OrderModel by guid passed as parameter and versionId is null
      *
      * @param guid
      *
      * @return a OrderModel
      */
     OrderModel getOrderModelByGuid(String guid);
+
+    /**
+     * Filter CartModel by guid passed as parameter
+     *
+     * @param guid (=orderNumber)
+     *
+     * @return a CartModel
+     */
+    CartModel getCartModelByGuid(String guid);
 }

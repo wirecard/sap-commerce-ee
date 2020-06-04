@@ -52,6 +52,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
+import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.lang3.BooleanUtils;
@@ -60,6 +61,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Base64;
+import java.util.Collections;
+
 
 public class DefaultWirecardHopPaymentOperationsFacade implements WirecardHopPaymentOperationsFacade {
 
@@ -73,6 +76,7 @@ public class DefaultWirecardHopPaymentOperationsFacade implements WirecardHopPay
     private CartService cartService;
     private Converter<AddressData, AddressModel> addressConverter;
     private PaymentConverter paymentConverter;
+	private GenericDao<AbstractOrderModel> abstractOrderGenericDao;
     private WirecardOrderModelDao orderModelDao;
     private SessionService sessionService;
     private PaymentCommandService paymentCommandService;
@@ -108,27 +112,50 @@ public class DefaultWirecardHopPaymentOperationsFacade implements WirecardHopPay
         return response;
     }
 
-    @Override
-    public Payment executePaymentOperation(String operation, PaymentOperationData data) throws
-        WirecardPaymenException {
-        return executePaymentOperation(operation, data, getCartService().getSessionCart());
-    }
+	@Override
+	public Payment executePaymentOperation(final String operation, final PaymentOperationData data)
+			throws WirecardPaymenException {
+		if (getCartService().hasSessionCart()) {
+			return executePaymentOperation(operation, data, getCartService().getSessionCart());
+		} else {
+			final String orderNumber = data.getPayment().getOrderNumber();
+			return executePaymentOperation(operation, data, orderNumber);
+		}
+	}
 
     @Override
-    public Payment executePaymentOperation(String operation, PaymentOperationData data, String orderCode) throws
-        WirecardPaymenException {
-
+    public Payment executePaymentOperation(String operation, PaymentOperationData data, String orderNumber)
+            throws WirecardPaymenException {
         try {
-            OrderModel orderModel = getOrderModelDao().getOrderModelByGuid(orderCode);
+            OrderModel orderModel = getOrderModelDao().getOrderModelByGuid(orderNumber);
             return executePaymentOperation(operation, data, orderModel);
         } catch (ModelNotFoundException ex) {
-            LOG.warn("Notification doesn`t match with any order: {}", data.getPayment().getOrderNumber());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Notification doesn`t match with any order", ex);
-            }
+			LOG.warn("Notification doesn`t match with any order, trying to get Cart: {}", orderNumber);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Notification doesn`t match with any order", ex);
+			}
+			return executePaymentOperationOnCart(operation, data, orderNumber);
         }
-        return data.getPayment();
     }
+
+	private Payment executePaymentOperationOnCart(String operation, PaymentOperationData data, String orderNumber)
+			throws WirecardPaymenException {
+		//WIRE-19: Fallback for cases where the order model cannot be found.
+		//This might be necessary if a client loses their session, for example during a PayPal payment.
+		//We try to get the cart instead and proceed with the payment normally after casting it into an order.
+		//If that also fails, we throw a PaymentException to gracefully logout the client.
+		try {
+			final CartModel cartModel = getOrderModelDao().getCartModelByGuid(orderNumber);
+			final AbstractOrderModel orderModel = (AbstractOrderModel) cartModel;
+			return executePaymentOperation(operation, data, orderModel);
+		} catch (ModelNotFoundException ex) {
+			LOG.warn("Notification doesn`t match with any cart: {}", orderNumber);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Notification doesn`t match with any cart", ex);
+			}
+			throw new WirecardPaymenException("Model not found for guid " + orderNumber, ex);
+		}
+	}
 
     private Payment executePaymentOperation(String operation, PaymentOperationData data, AbstractOrderModel order)
         throws WirecardPaymenException {
@@ -321,4 +348,9 @@ public class DefaultWirecardHopPaymentOperationsFacade implements WirecardHopPay
     public void setWirecardPaymentModeService(WirecardPaymentModeService wirecardPaymentModeService) {
         this.wirecardPaymentModeService = wirecardPaymentModeService;
     }
+	
+	@Required
+	public void setAbstractOrderGenericDao(GenericDao<AbstractOrderModel> abstractOrderGenericDao) {
+		this.abstractOrderGenericDao = abstractOrderGenericDao;
+	}
 }

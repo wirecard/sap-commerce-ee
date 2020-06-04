@@ -258,12 +258,16 @@
     </bean>
     <bean id="basicResponseHandler" class="org.apache.http.impl.client.BasicResponseHandler"/>
 
+    <bean name="abstractOrderGenericDao" class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao" >
+        <constructor-arg value="AbstractOrder" />
+    </bean>
     <bean id="wirecardHopPaymentOperationsFacade" class="com.wirecard.hybris.facades.impl.DefaultWirecardHopPaymentOperationsFacade">
         <property name="paymentOperationStrategy" ref="wirecardPaymentOperationStrategy"/>
         <property name="userService" ref="userService"/>
         <property name="cartService" ref="cartService"/>
         <property name="addressConverter" ref="addressReverseConverter"/>
         <property name="paymentConverter" ref="defaultWirecardPaymentConverter"/>
+        <property name="abstractOrderGenericDao" ref="abstractOrderGenericDao"/>
         <property name="orderModelDao" ref="orderModelDao"/>
         <property name="sessionService" ref="sessionService"/>
         <property name="wirecardPaymentModeService" ref="wirecardPaymentModeService"/>
