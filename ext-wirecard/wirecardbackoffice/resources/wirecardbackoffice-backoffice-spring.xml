@@ -14,4 +14,5 @@
         <property name="name" value="labels" />
     </bean>
 
+    <bean id="linkPsd2Hint" class="com.wirecard.hybris.backoffice.renderers.PSD2HintRenderer" />
 </beans>

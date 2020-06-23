@@ -114,6 +114,9 @@
     <context merge-by="type" parent="GenericItem" type="BaseStore" component="editor-area">
         <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
             <editorArea:tab name="wirecard.base.store.wirecard.tab">
+                <editorArea:section name="wirecard.base.store.wirecard.psd2link.section">
+                    <editorArea:customPanel name="linkPsd2Hint" spring-bean="linkPsd2Hint" />
+                </editorArea:section>
                 <editorArea:section name="wirecard.base.store.wirecard.section">
                     <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="paymentConfigurations"/>
                     <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="wirecardCertificate"/>
